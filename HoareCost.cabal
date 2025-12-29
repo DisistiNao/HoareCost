@@ -18,8 +18,9 @@ extra-source-files:  CHANGELOG.md
 
 library
   exposed-modules:
-    Variables,
-    Syntax
+    Imp,
+    Syntax,
+    Variables
   hs-source-dirs:      src
   build-depends:
     base >=4.13 && <4.22,
