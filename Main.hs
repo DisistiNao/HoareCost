@@ -1,6 +1,7 @@
 module Main where
 
 import Imp
+import Hoare
 import Syntax
 import Variables
 

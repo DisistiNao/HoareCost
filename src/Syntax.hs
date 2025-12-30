@@ -91,3 +91,6 @@ getVars x = nub $ go x
 -- Get all free variables
 getFreeVars :: Eq a => PropCalc (FOL a) -> [a]
 getFreeVars x = getVars x \\ getBoundVars x
+
+fromProof :: Proof a -> a
+fromProof (Proof a) = a
