@@ -1,8 +1,15 @@
 module Oracle where
 
+import System.IO (hFlush, stdout)
+import System.IO.Unsafe (unsafePerformIO)
+import Data.IORef
+import qualified Data.Map as M
+import Control.Exception (catch, SomeException)
+import Data.List
+
 import Syntax
 
-data OracleData = OracleData
+data OracleData a = OracleData
     {
         invariant :: PropCalc (FOL a),
         variant :: Arith a,
@@ -10,7 +17,7 @@ data OracleData = OracleData
         costFunction :: Arith a
     }
 
-getOracle :: String -> IO OracleData
+getOracle :: String -> IO (OracleData a)
 getOracle loopID = do
     cache <- readIORef oracleCache
     case M.lookup loopId cache of
@@ -20,7 +27,7 @@ getOracle loopID = do
             modifyIORef' oracleCache (M.insert loopId entry)
             pure entry
 
-oracleCache :: IORef (M.Map String OracleEntry)
+oracleCache :: IORef (M.Map String (OracleData a))
 oracleCache = unsafePerformIO (newIORef M.empty)
 
 clearOracleCache :: IO ()

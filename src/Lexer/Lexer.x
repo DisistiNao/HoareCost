@@ -32,32 +32,16 @@ tokens :-
 
       -- other tokens 
 
-      <0> @number       {mkNumber}
-      <0> ":="          {simpleToken TAssign}
-      <0> "read"        {simpleToken TRead}
-      <0> "print"       {simpleToken TPrint}
-      <0> "if"          {simpleToken TIf}
-      <0> "then"        {simpleToken TThen}
-      <0> "else"        {simpleToken TElse}
-      <0> "while"       {simpleToken TWhile}
-      <0> ";"           {simpleToken TSemi}
+      <0> "Var"         {simpleToken TVar}
+      <0> "Z"           {simpleToken TZero}
+      <0> "S"           {simpleToken TSucc}
+      <0> "Plus"        {simpleToken TPlus}
+      <0> "Mult"        {simpleToken TMult}
+      
       <0> "("           {simpleToken TLParen}
       <0> ")"           {simpleToken TRParen}
-      <0> "{"           {simpleToken TLBrace}
-      <0> "}"           {simpleToken TRBrace}
-      <0> "+"           {simpleToken TPlus}
-      <0> "*"           {simpleToken TTimes}
-      <0> "-"           {simpleToken TMinus}
-      <0> "/"           {simpleToken TDiv}
-      <0> "=="          {simpleToken TEq}
-      <0> "<"           {simpleToken TLt}
-      <0> "!"           {simpleToken TNot}
-      <0> "&&"          {simpleToken TAnd}
-      <0> "int"         {simpleToken TTInt}
-      <0> "bool"        {simpleToken TTBool}
-      <0> "true"        {simpleToken TTrue}
-      <0> "false"       {simpleToken TFalse}
-      <0> "skip"        {simpleToken TSkip}
+      
+      <0> @number       {mkNumber}
       <0> @identifier   {mkIdent}
 
 {
@@ -102,52 +86,22 @@ data Token
 data Lexeme    
   = TIdent String
   | TNumber Int
-  | TAssign 
-  | TRead 
-  | TPrint 
-  | TIf 
-  | TThen 
-  | TElse 
-  | TWhile 
-  | TSemi 
+  | TVar 
+  | TZero 
+  | TSucc 
+  | TPlus 
+  | TMult 
   | TLParen 
   | TRParen 
-  | TLBrace 
-  | TRBrace 
-  | TPlus 
-  | TTimes 
-  | TMinus 
-  | TDiv 
-  | TEq 
-  | TLt 
-  | TNot 
-  | TAnd 
-  | TTInt 
-  | TTBool 
-  | TTrue 
-  | TFalse 
-  | TSkip
-  | TEOF
+  | TEOF 
   deriving (Eq, Ord, Show)
 
 position :: AlexPosn -> (Int, Int)
 position (AlexPn _ x y) = (x,y)
 
 mkIdent :: AlexAction Token 
-mkIdent (st, _, _, str) len 
-  = case take len str of 
-      "skip" -> pure $ Token (position st) TSkip
-      "if"   -> pure $ Token (position st) TIf
-      "then" -> pure $ Token (position st) TThen
-      "else" -> pure $ Token (position st) TElse
-      "true" -> pure $ Token (position st) TTrue
-      "false" -> pure $ Token (position st) TFalse
-      "int"   -> pure $ Token (position st) TTInt
-      "bool"  -> pure $ Token (position st) TTBool
-      "read"  -> pure $ Token (position st) TRead
-      "print" -> pure $ Token (position st) TPrint
-      "while" -> pure $ Token (position st) TWhile
-      _ ->  pure $ Token (position st) (TIdent (take len str))
+mkIdent (st, _, _, str) len = 
+  pure $ Token (position st) (TIdent (take len str))
 
 
 mkNumber :: AlexAction Token

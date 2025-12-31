@@ -11,6 +11,17 @@
   (major1) == 0 && (major2) == 1 && (minor) <= 0)
 #endif /* MIN_VERSION_HoareCost */
 
+/* package array-0.5.4.0 */
+#ifndef VERSION_array
+#define VERSION_array "0.5.4.0"
+#endif /* VERSION_array */
+#ifndef MIN_VERSION_array
+#define MIN_VERSION_array(major1,major2,minor) (\
+  (major1) <  0 || \
+  (major1) == 0 && (major2) <  5 || \
+  (major1) == 0 && (major2) == 5 && (minor) <= 4)
+#endif /* MIN_VERSION_array */
+
 /* package base-4.13.0.0 */
 #ifndef VERSION_base
 #define VERSION_base "4.13.0.0"
@@ -32,6 +43,17 @@
   (major1) == 0 && (major2) <  6 || \
   (major1) == 0 && (major2) == 6 && (minor) <= 2)
 #endif /* MIN_VERSION_containers */
+
+/* tool alex-3.2.5 */
+#ifndef TOOL_VERSION_alex
+#define TOOL_VERSION_alex "3.2.5"
+#endif /* TOOL_VERSION_alex */
+#ifndef MIN_TOOL_VERSION_alex
+#define MIN_TOOL_VERSION_alex(major1,major2,minor) (\
+  (major1) <  3 || \
+  (major1) == 3 && (major2) <  2 || \
+  (major1) == 3 && (major2) == 2 && (minor) <= 5)
+#endif /* MIN_TOOL_VERSION_alex */
 
 /* tool gcc-11 */
 #ifndef TOOL_VERSION_gcc
@@ -76,6 +98,17 @@
   (major1) == 2 && (major2) <  23 || \
   (major1) == 2 && (major2) == 23 && (minor) <= 0)
 #endif /* MIN_TOOL_VERSION_haddock */
+
+/* tool happy-1.19.12 */
+#ifndef TOOL_VERSION_happy
+#define TOOL_VERSION_happy "1.19.12"
+#endif /* TOOL_VERSION_happy */
+#ifndef MIN_TOOL_VERSION_happy
+#define MIN_TOOL_VERSION_happy(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  19 || \
+  (major1) == 1 && (major2) == 19 && (minor) <= 12)
+#endif /* MIN_TOOL_VERSION_happy */
 
 /* tool hpc-0.67 */
 #ifndef TOOL_VERSION_hpc
