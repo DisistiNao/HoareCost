@@ -32,11 +32,15 @@ tokens :-
 
       -- other tokens 
 
-      <0> "Var"         {simpleToken TVar}
-      <0> "Z"           {simpleToken TZero}
-      <0> "S"           {simpleToken TSucc}
-      <0> "Plus"        {simpleToken TPlus}
-      <0> "Mult"        {simpleToken TMult}
+      <0> "PropVar"     {simpleToken TPropVar}
+      <0> "Not"         {simpleToken TNot}
+      <0> "And"         {simpleToken TAnd}
+      <0> "Or"          {simpleToken TOr}
+      <0> "Imp"         {simpleToken TImp}
+      
+      <0> "Eq"          {simpleToken TEq}
+      <0> "ForAll"      {simpleToken TForAll}
+      <0> "Exists"      {simpleToken TExists}
       
       <0> "("           {simpleToken TLParen}
       <0> ")"           {simpleToken TRParen}
@@ -83,17 +87,28 @@ data Token
     , lexeme :: Lexeme 
     } deriving (Eq, Ord, Show)
 
-data Lexeme    
-  = TIdent String
+data Lexeme
+  = TVar
+  | TZero
+  | TSucc
+  | TPlus
+  | TMult
+
+  | TPropVar
+  | TNot
+  | TAnd
+  | TOr
+  | TImp
+  | TEq
+  | TForAll
+  | TExists
+
+  | TLParen
+  | TRParen
+  | TEOF
+
+  | TIdent String
   | TNumber Int
-  | TVar 
-  | TZero 
-  | TSucc 
-  | TPlus 
-  | TMult 
-  | TLParen 
-  | TRParen 
-  | TEOF 
   deriving (Eq, Ord, Show)
 
 position :: AlexPosn -> (Int, Int)
