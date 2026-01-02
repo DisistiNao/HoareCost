@@ -22,6 +22,7 @@ library
     Hoare,
     Lexer.Lexer,
     -- Oracle,
+    Parser.Arith,
     Syntax,
     Variables
   hs-source-dirs:      src

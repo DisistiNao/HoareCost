@@ -32,6 +32,12 @@ tokens :-
 
       -- other tokens 
 
+      <0> "Var"         {simpleToken TVar}
+      <0> "Z"           {simpleToken TZero}
+      <0> "S"           {simpleToken TSucc}
+      <0> "Plus"        {simpleToken TPlus}
+      <0> "Mult"        {simpleToken TMult}
+
       <0> "PropVar"     {simpleToken TPropVar}
       <0> "Not"         {simpleToken TNot}
       <0> "And"         {simpleToken TAnd}
