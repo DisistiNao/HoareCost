@@ -5,7 +5,7 @@ import Hoare
 import Lexer.Lexer
 import Parser.Arith
 import Parser.PropCalc
--- import Oracle
+import Oracle
 import Syntax
 import Variables
 

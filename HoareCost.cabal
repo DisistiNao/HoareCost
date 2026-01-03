@@ -21,7 +21,7 @@ library
     Imp,
     Hoare,
     Lexer.Lexer,
-    -- Oracle,
+    Oracle,
     Parser.Arith,
     Parser.PropCalc,
     Syntax,

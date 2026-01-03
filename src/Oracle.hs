@@ -7,18 +7,21 @@ import qualified Data.Map as M
 import Control.Exception (catch, SomeException)
 import Data.List
 
+import Parser.Arith
+import Parser.PropCalc
 import Syntax
 
-data OracleData a = OracleData
+data OracleData = OracleData
     {
-        invariant :: PropCalc (FOL a),
-        variant :: Arith a,
-        numIterations :: Arith a,
-        costFunction :: Arith a
+        invariant :: PropCalc (FOL String),
+        variant :: Arith String,
+        numIterations :: Arith String,
+        costFunction :: Arith String
     }
+    deriving (Show)
 
-getOracle :: String -> IO (OracleData a)
-getOracle loopID = do
+getOracle :: String -> IO OracleData
+getOracle loopId = do
     cache <- readIORef oracleCache
     case M.lookup loopId cache of
         Just entry -> pure entry
@@ -27,13 +30,10 @@ getOracle loopID = do
             modifyIORef' oracleCache (M.insert loopId entry)
             pure entry
 
-oracleCache :: IORef (M.Map String (OracleData a))
+{-# NOINLINE oracleCache #-}
+oracleCache :: IORef (M.Map String OracleData)
 oracleCache = unsafePerformIO (newIORef M.empty)
 
-clearOracleCache :: IO ()
-clearOracleCache = writeIORef oracleCache M.empty
-
-{-
 askForOracle :: IO OracleData
 askForOracle = catch readInputs handleError
     where
@@ -41,35 +41,34 @@ askForOracle = catch readInputs handleError
             putStr "Invariant: "
             hFlush stdout
             invStr <- getLine
-            let inv = parsePropCalc invStr
+            inv <- parseOrFail (propCalcParser invStr)
 
             putStr "Variant: "
             hFlush stdout
             varStr <- getLine
-            let var = parseArith varStr
+            var <- parseOrFail (arithParser varStr)
 
             putStr "Number of Iterations: "
             hFlush stdout
             nStr <- getLine
-            let n = parseArith nStr
+            n <- parseOrFail (arithParser nStr)
 
             putStr "Cost Function of While (example: k -> 1 + k): "
             hFlush stdout
             tStr <- getLine
-            let t = parseArith tStr
+            t <- parseOrFail (arithParser tStr)
 
-            pure $ OracleEntry inv var n t
+            pure $ OracleData inv var n t
         
-        handleError :: SomeException -> IO OracleEntry
+        handleError :: SomeException -> IO OracleData
         handleError _ = do
             putStrLn "Oracle Error (default values used)"
-            pure $ OracleEntry
+            pure $ OracleData
                 (PropVar (Eq Z Z))
                 Z
                 (S Z)
                 (S Z)
--}
 
--- parsePropCalc :: String -> PropCalc (FOL a)
-
--- parseArith :: -> String -> Arith a
+parseOrFail :: Either String a -> IO a
+parseOrFail (Left err)  = ioError (userError err)
+parseOrFail (Right val) = pure val
