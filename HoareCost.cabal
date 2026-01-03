@@ -23,6 +23,7 @@ library
     Lexer.Lexer,
     -- Oracle,
     Parser.Arith,
+    Parser.PropCalc,
     Syntax,
     Variables
   hs-source-dirs:      src

@@ -27,14 +27,6 @@ import Syntax
       
 %%
 
--- Program : CodeBlock                       { Arith $1 }
---         | '(' Program ')'                 { Arith $2 }
-
--- CodeBlock : ExpList                       { reverse $1 }
-
--- ExpList : ExpList Exp                     { $2 : $1 }
---          |                                { [] }
-
 Exp
     : 'Var' id                            { Var $2 }
     | 'Z'                                 { Z }
