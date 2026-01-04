@@ -1,5 +1,6 @@
 module Main where
 
+import Costs
 import Imp
 import Hoare
 import Lexer.Lexer
@@ -8,8 +9,6 @@ import Parser.PropCalc
 import Oracle
 import Syntax
 import Variables
-
--- import qualified Data.Map as M
 
 main :: IO ()
 main = putStrLn "Hello, Haskell!"
