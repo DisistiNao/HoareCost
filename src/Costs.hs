@@ -64,10 +64,16 @@ costAExpr :: Arith a -> Arith String
 costAExpr (Var _) = S Z
 costAExpr Z = S Z
 costAExpr (S a) = costAExpr a
-costAExpr (Plus a1 a2) = Plus (Plus (costAExpr a1) (costAExpr a2)) (S Z)
-costAExpr (Mult a1 a2) = Plus (Plus (costAExpr a1) (costAExpr a2)) (S Z)
+costAExpr (Plus a1 a2)  = Plus (Plus (costAExpr a1) (costAExpr a2)) (S Z)
+costAExpr (Minus a1 a2) = Plus (Plus (costAExpr a1) (costAExpr a2)) (S Z)
+costAExpr (Mult a1 a2)  = Plus (Plus (costAExpr a1) (costAExpr a2)) (S Z)
 
-costBExpr :: PropCalc a -> Arith String
+costBExpr :: PropCalc (FOL a) -> Arith String
+costBExpr (PropVar (Lt a1 a2)) = Plus (Plus (costAExpr a1) (costAExpr a2)) (S Z)
+costBExpr (PropVar (Gt a1 a2)) = Plus (Plus (costAExpr a1) (costAExpr a2)) (S Z)
+costBExpr (PropVar (Le a1 a2)) = Plus (Plus (costAExpr a1) (costAExpr a2)) (S Z)
+costBExpr (PropVar (Ge a1 a2)) = Plus (Plus (costAExpr a1) (costAExpr a2)) (S Z)
+-- costBExpr (PropVar (Eq a1 a2)) = Plus (Plus (costAExpr a1) (costAExpr a2)) (S Z)
 costBExpr (PropVar _) = S Z
 costBExpr (Not a) = Plus (costBExpr a) (S Z)
 costBExpr (And a1 a2) = Plus (Plus (costBExpr a1) (costBExpr a2)) (S Z)

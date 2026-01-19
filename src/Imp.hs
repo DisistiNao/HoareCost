@@ -10,10 +10,15 @@ aeval ctx (Var v)        = if M.member v ctx then Right (ctx M.! v) else Left "E
 aeval ctx Z              = Right 0
 aeval ctx (S a)          = aeval ctx a >>= \a -> Right $ 1 + a
 aeval ctx (Plus a1 a2)   = aeval ctx a1 >>= \a1 -> aeval ctx a2 >>= \a2 -> Right $ a1 + a2
+aeval ctx (Minus a1 a2)  = aeval ctx a1 >>= \a1 -> aeval ctx a2 >>= \a2 -> Right $ max 0 (a1 - a2)
 aeval ctx (Mult a1 a2)   = aeval ctx a1 >>= \a1 -> aeval ctx a2 >>= \a2 -> Right $ a1 * a2
 
 beval :: (Ord a, Eq a) => Context a -> PropCalc (FOL a) -> Either String Bool
 beval ctx (PropVar (Eq a1 a2))   = aeval ctx a1 >>= \a1 -> aeval ctx a2 >>= \a2 -> Right $ a1 == a2
+beval ctx (PropVar (Lt a1 a2))   = aeval ctx a1 >>= \a1 -> aeval ctx a2 >>= \a2 -> Right $ a1 < a2
+beval ctx (PropVar (Gt a1 a2))   = aeval ctx a1 >>= \a1 -> aeval ctx a2 >>= \a2 -> Right $ a1 > a2
+beval ctx (PropVar (Le a1 a2))   = aeval ctx a1 >>= \a1 -> aeval ctx a2 >>= \a2 -> Right $ a1 <= a2
+beval ctx (PropVar (Ge a1 a2))   = aeval ctx a1 >>= \a1 -> aeval ctx a2 >>= \a2 -> Right $ a1 >= a2
 beval ctx (PropVar (ForAll x b)) = beval ctx b
 beval ctx (PropVar (Exists x b)) = beval ctx b
 beval ctx (Not b)     = beval ctx b >>= \b -> Right $ not b

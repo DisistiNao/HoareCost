@@ -36,6 +36,7 @@ tokens :-
       <0> "Z"           {simpleToken TZero}
       <0> "S"           {simpleToken TSucc}
       <0> "Plus"        {simpleToken TPlus}
+      <0> "Minus"       {simpleToken TMinus}
       <0> "Mult"        {simpleToken TMult}
 
       <0> "PropVar"     {simpleToken TPropVar}
@@ -45,6 +46,10 @@ tokens :-
       <0> "Imp"         {simpleToken TImp}
       
       <0> "Eq"          {simpleToken TEq}
+      <0> "Lt"          {simpleToken TLt}
+      <0> "Gt"          {simpleToken TGt}
+      <0> "Le"          {simpleToken TLe}
+      <0> "Ge"          {simpleToken TGe}
       <0> "ForAll"      {simpleToken TForAll}
       <0> "Exists"      {simpleToken TExists}
       
@@ -98,6 +103,7 @@ data Lexeme
   | TZero
   | TSucc
   | TPlus
+  | TMinus
   | TMult
 
   | TPropVar
@@ -106,6 +112,10 @@ data Lexeme
   | TOr
   | TImp
   | TEq
+  | TLt
+  | TGt
+  | TLe
+  | TGe
   | TForAll
   | TExists
 

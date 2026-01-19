@@ -18,6 +18,7 @@ import Syntax
     'Z'         { Token _ TZero }
     'S'         { Token _ TSucc }
     'Plus'      { Token _ TPlus }
+    'Minus'     { Token _ TMinus }
     'Mult'      { Token _ TMult }
 
     'PropVar'   { Token _ TPropVar }
@@ -27,6 +28,10 @@ import Syntax
     'Imp'       { Token _ TImp }
 
     'Eq'        { Token _ TEq }
+    'Lt'        { Token _ TLt }
+    'Gt'        { Token _ TGt }
+    'Le'        { Token _ TLe }
+    'Ge'        { Token _ TGe }
     'ForAll'    { Token _ TForAll }
     'Exists'    { Token _ TExists }
 
@@ -45,6 +50,10 @@ Prop
 
 FOLExpr
     : 'Eq' '(' Exp ')' '(' Exp ')'       { Eq $3 $6 }
+    | 'Lt' '(' Exp ')' '(' Exp ')'       { Lt $3 $6 }
+    | 'Gt' '(' Exp ')' '(' Exp ')'       { Gt $3 $6 }
+    | 'Le' '(' Exp ')' '(' Exp ')'       { Le $3 $6 }
+    | 'Ge' '(' Exp ')' '(' Exp ')'       { Ge $3 $6 }
     | 'ForAll' id '(' Prop ')'           { ForAll $2 $4 }
     | 'Exists' id '(' Prop ')'           { Exists $2 $4 }
 
@@ -54,6 +63,7 @@ Exp
     | 'S' Exp                            { S $2 }
     | 'S' '(' Exp ')'                    { S $3 }
     | 'Plus' '(' Exp ')' '(' Exp ')'     { Plus $3 $6 }
+    | 'Minus' '(' Exp ')' '(' Exp ')'    { Minus $3 $6 }
     | 'Mult' '(' Exp ')' '(' Exp ')'     { Mult $3 $6 }
     | '(' Exp ')'                        { $2 }
 

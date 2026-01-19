@@ -7,6 +7,7 @@ data Arith a =
   | Z
   | S (Arith a)
   | Plus (Arith a) (Arith a)
+  | Minus (Arith a) (Arith a)
   | Mult (Arith a) (Arith a)
   deriving (Eq, Show)
 
@@ -24,6 +25,10 @@ type ESP a = Either String (Proof (PropCalc a))
 
 data FOL a =
   Eq (Arith a) (Arith a)
+  | Lt (Arith a) (Arith a)
+  | Gt (Arith a) (Arith a)
+  | Le (Arith a) (Arith a)
+  | Ge (Arith a) (Arith a)
   | ForAll a (PropCalc (FOL a))
   | Exists a (PropCalc (FOL a))
   deriving (Eq, Show)
@@ -41,6 +46,7 @@ data Command a =
 substArith :: Eq a => Arith a -> Arith a -> Arith a -> Arith a
 substArith (S q) v e = S (substArith q v e)
 substArith (Plus a b) v e = Plus (substArith a v e) (substArith b v e)
+substArith (Minus a b) v e = Minus (substArith a v e) (substArith b v e)
 substArith (Mult a b) v e = Mult (substArith a v e) (substArith b v e)
 substArith x v e | x == v = e
 substArith x v e = x
@@ -51,6 +57,10 @@ substPropCalc (Proof f) v e = Proof $ go f v e
   where
     go :: Eq a => PropCalc (FOL a) -> Arith a -> Arith a -> PropCalc (FOL a)
     go (PropVar (Eq a b)) v e     = PropVar (Eq (substArith a v e) (substArith b v e))
+    go (PropVar (Lt a b)) v e     = PropVar (Lt (substArith a v e) (substArith b v e))
+    go (PropVar (Gt a b)) v e     = PropVar (Gt (substArith a v e) (substArith b v e))
+    go (PropVar (Le a b)) v e     = PropVar (Le (substArith a v e) (substArith b v e))
+    go (PropVar (Ge a b)) v e     = PropVar (Ge (substArith a v e) (substArith b v e))
     go (PropVar (ForAll x y)) v e = PropVar (ForAll x (go y v e))
     go (PropVar (Exists x y)) v e = PropVar (Exists x (go y v e))
     go (Not x) v e                = Not (go x v e)
@@ -73,6 +83,7 @@ getArithVars x = nub $ go x
     go (Var a) = [a]
     go (S x) = go x
     go (Plus a b) = go a ++ go b
+    go (Minus a b) = go a ++ go b
     go (Mult a b) = go a ++ go b
     go _ = []
 
@@ -82,6 +93,10 @@ getVars x = nub $ go x
   where
     go (PropVar (ForAll x y)) = go y
     go (PropVar (Exists x y)) = go y
+    go (PropVar (Lt a b)) = getArithVars a ++ getArithVars b
+    go (PropVar (Gt a b)) = getArithVars a ++ getArithVars b
+    go (PropVar (Le a b)) = getArithVars a ++ getArithVars b
+    go (PropVar (Ge a b)) = getArithVars a ++ getArithVars b
     go (PropVar (Eq a b)) = getArithVars a ++ getArithVars b
     go (Not x) = go x
     go (And x y) = go x ++ go y

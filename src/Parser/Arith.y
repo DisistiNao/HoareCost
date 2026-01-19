@@ -20,6 +20,7 @@ import Syntax
     'Z'     { Token _ TZero }
     'S'     { Token _ TSucc }
     'Plus'  { Token _ TPlus }
+    'Minus' { Token _ TMinus }
     'Mult'  { Token _ TMult }
 
     '('     { Token _ TLParen }
@@ -33,6 +34,7 @@ Exp
     | 'S' Exp                             { S $2 }
     | 'S' '(' Exp ')'                     { S $3 }
     | 'Plus' '(' Exp ')' '(' Exp ')'      { Plus $3 $6 }
+    | 'Minus' '(' Exp ')' '(' Exp ')'     { Minus $3 $6 }
     | 'Mult' '(' Exp ')' '(' Exp ')'      { Mult $3 $6 }
     | '(' Exp ')'                         { $2 }
 
