@@ -19,7 +19,22 @@ hoareAssignment v e q =
   Right $ HoareTriple
   q
   (CAssign v e)
-  (fromProof (substPropCalc (Proof q) (Var v) e))
+  (substPost v e q)
+
+substPost :: Eq a => a -> Arith a -> PropCalc (FOL a) -> PropCalc (FOL a)
+substPost v e = go
+  where
+    go (PropVar (Eq (Var x) rhs))
+      | x == v    = PropVar (Eq (Var v) e)
+      | otherwise = PropVar (Eq (Var x) rhs)
+
+    go (PropVar (Eq lhs rhs)) =
+      PropVar (Eq lhs rhs)
+
+    go (And p q) = And (go p) (go q)
+    go (Or  p q) = Or  (go p) (go q)
+    go (Not p)   = Not (go p)
+    go (Imp p q) = Imp (go p) (go q)
 
 -- | Hoare consequence rule
 hoareConsequence :: Eq a => Proof (PropCalc (FOL a)) -> HoareTriple a -> Proof (PropCalc (FOL a)) -> ESHT a

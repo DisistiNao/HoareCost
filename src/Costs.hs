@@ -15,12 +15,10 @@ costSkip :: PropCalc (FOL a) -> ESCost a
 costSkip q = Right $ CostHoareTriple (HoareTriple q CSkip q) Z
 
 costAssignment :: Eq a => a -> Arith a -> PropCalc (FOL a) -> ESCost a
-costAssignment v e q =
-    Right $ CostHoareTriple
-        (HoareTriple
-            (fromProof (substPropCalc (Proof q) (Var v) e))
-            (CAssign v e)
-            q)
+costAssignment v e q = do
+    ht <- hoareAssignment v e q
+    pure $ CostHoareTriple
+        ht
         (Plus (costAExpr e) (S Z))
 
 costConsequence :: Eq a => Proof (PropCalc (FOL a)) -> CostHoareTriple a -> Proof (PropCalc (FOL a)) -> ESCost a
