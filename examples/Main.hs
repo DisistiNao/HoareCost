@@ -6,7 +6,7 @@ import qualified Swap
 
 main :: IO ()
 main = do
-    -- putStrLn "Run examples"
-    -- Swap.main
-    -- Assign.main
+    putStrLn "Run examples"
+    Swap.main
+    Assign.main
     Division.main

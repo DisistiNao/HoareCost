@@ -7,7 +7,11 @@ import Oracle hiding (invariant)
 import Syntax
 import Variables
 
+--------------------------------------------------------------------------------
+-- Preconditions
 -- { r == x ∧ q == 0 ∧ y > 0 ∧ x ≥ 0 }
+--------------------------------------------------------------------------------
+
 pre :: PropCalc (FOL Vars)
 pre =
   And
@@ -18,58 +22,77 @@ pre =
       (PropVar (Gt (Var Y) Z))
       (PropVar (Ge (Var X) Z)))
 
+--------------------------------------------------------------------------------
+-- Postconditions
 -- { x == r + y*q ∧ r < y }
+--------------------------------------------------------------------------------
+
 post :: PropCalc (FOL Vars)
 post =
   And
-    (PropVar (Eq (Var X)
-      (Plus (Var R) (Mult (Var Y) (Var Q)))))
+    (PropVar
+      (Eq (Var X)
+        (Plus (Var R) (Mult (Var Y) (Var Q)))))
     (PropVar (Lt (Var R) (Var Y)))
 
--- while y ≤ r
+--------------------------------------------------------------------------------
+-- Loop condition: while (y ≤ r)
+--------------------------------------------------------------------------------
+
 cond :: PropCalc (FOL Vars)
 cond =
   PropVar (Le (Var Y) (Var R))
 
--- Invariant: x == r + y*q ∧ r ≥ 0
+--------------------------------------------------------------------------------
+-- Loop invariant
+-- x == r + y*q ∧ r ≥ 0 ∧ y > 0
+--------------------------------------------------------------------------------
+
 invariant :: PropCalc (FOL Vars)
 invariant =
   And
-    (PropVar (Eq (Var X)
-      (Plus (Var R) (Mult (Var Y) (Var Q)))))
-    (PropVar (Ge (Var R) Z))
+    (And
+      (PropVar
+        (Eq (Var X)
+          (Plus (Var R) (Mult (Var Y) (Var Q)))))
+      (PropVar (Ge (Var R) Z)))
+    (PropVar (Gt (Var Y) Z))
 
--- r = r - y; q = q + 1
-body :: ESCost Vars
-body = do
-  t1 <- costAssignment R (Minus (Var R) (Var Y)) invariant
-  t2 <- costAssignment Q (Plus (Var Q) (S Z)) invariant
-  costSequence t1 t2
+--------------------------------------------------------------------------------
+-- Loop body
+-- r := r - y;
+-- q := q + 1;
+--------------------------------------------------------------------------------
 
--- while loop with oracle-based cost
--- whileBody :: IO (ESCost Vars)
--- whileBody =
---   costWhile "divLoop" $
---     CostHoareTriple
---       (HoareTriple (And cond invariant)
---                    (CWhile cond CSkip)
---                    invariant)
---       Z
+loopBody :: Command Vars
+loopBody =
+  CSequence
+    (CAssign R (Minus (Var R) (Var Y)))
+    (CAssign Q (Plus (Var Q) (S Z)))
 
-whileBody :: IO (ESCost Vars)
-whileBody =
-  costWhile "divLoop" $
-    CostHoareTriple
-      (HoareTriple (And cond invariant)
-                   (CSequence
-                      (CAssign R (Minus (Var R) (Var Y)))
-                      (CAssign Q (Plus (Var Q) (S Z))))
-                   invariant)
-      Z
+--------------------------------------------------------------------------------
+-- Full program
+-- r := x;
+-- q := 0;
+-- while (y ≤ r) do
+--   r := r - y;
+--   q := q + 1;
+--------------------------------------------------------------------------------
 
+cmd :: Command Vars
+cmd =
+  CSequence
+    (CAssign R (Var X))
+    (CSequence
+      (CAssign Q Z)
+      (CWhile "divLoop" cond loopBody))
+
+--------------------------------------------------------------------------------
+-- Main
+--------------------------------------------------------------------------------
 
 main :: IO ()
 main = do
---   putStrLn "Division program with cost:"
-  result <- whileBody
+  putStrLn "Division program with cost:"
+  result <- costCmd (HoareTriple pre cmd post)
   print result

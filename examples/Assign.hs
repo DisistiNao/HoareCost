@@ -10,24 +10,23 @@ import Variables
 p :: PropCalc (FOL Vars)
 p = (PropVar (Eq (Var A) Z))
 
-h1, h2 :: ESCost Vars
-h1 = costAssignment A Z p
-h2 = costAssignment A (Plus (Var A) two) p
+q :: PropCalc (FOL Vars)
+q = (PropVar (Eq (Var A) (S (S Z))))
 
 two :: Arith Vars
 two = S (S Z)
 
-body1 :: ESCost Vars
-body1 = h1
+cmd1 :: Command Vars
+cmd1 = CAssign A Z
 
-body2 :: ESCost Vars
-body2 = do
-    t1 <- h1
-    t2 <- h2
-    costSequence t1 t2
+cmd2 :: Command Vars
+cmd2 = CSequence cmd1 (CAssign A (Plus (Var A) two))
+
 
 main :: IO ()
 main = do
   putStrLn "Assign program with cost:"
+  body1 <- costCmd (HoareTriple p cmd1 q)
   print body1
+  body2 <- costCmd (HoareTriple p cmd2 q)
   print body2

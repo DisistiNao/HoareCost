@@ -7,44 +7,32 @@ import Oracle
 import Syntax
 import Variables
 
-p1 :: PropCalc (FOL Vars)
-p1 =
+p :: PropCalc (FOL Vars)
+p =
   And
     (And
       (PropVar (Eq (Var A) Z))
       (PropVar (Eq (Var B) Z)))
     (PropVar (Eq (Var C) Z))
 
-p2 :: PropCalc (FOL Vars)
-p2 =
-  And
-    (And
-      (PropVar (Eq (Var A) Z))
-      (PropVar (Eq (Var B) Z)))
-    (PropVar (Eq (Var C) (Var A)))
-
-p3 :: PropCalc (FOL Vars)
-p3 =
+q :: PropCalc (FOL Vars)
+q =
   And
     (And
       (PropVar (Eq (Var A) (Var B)))
-      (PropVar (Eq (Var B) Z)))
+      (PropVar (Eq (Var B) (Var C))))
     (PropVar (Eq (Var C) (Var A)))
 
-h1, h2, h3 :: ESCost Vars
-h1 = costAssignment C (Var A) p1
-h2 = costAssignment A (Var B) p2
-h3 = costAssignment B (Var C) p3
-
-body :: ESCost Vars
-body = do
-  t1  <- h1
-  t2  <- h2
-  t12 <- costSequence t1 t2
-  t3  <- h3
-  costSequence t12 t3
+cmd :: Command Vars
+cmd =
+  CSequence
+    (CSequence
+      (CAssign C (Var A))
+      (CAssign A (Var B)))
+    (CAssign B (Var C))
 
 main :: IO ()
 main = do
   putStrLn "Swap program with cost:"
+  body <- costCmd (HoareTriple p cmd q)
   print body
