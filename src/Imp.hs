@@ -31,9 +31,9 @@ eval ctx CSkip             = Right ctx
 eval ctx (CAssign c v)     = aeval ctx v >>= \v -> Right $ M.insert c v ctx
 eval ctx (CSequence c1 c2) = let ctx' = eval ctx c1 in ctx' >>= (\ctx'' -> eval ctx'' c2)
 eval ctx (CIfElse b c1 c2) = beval ctx b >>= \b -> eval ctx $ if b then c1 else c2
-eval ctx (CWhile b c)      = beval ctx b >>= \b' ->
+eval ctx (CWhile name b c)      = beval ctx b >>= \b' ->
   if b'
-  then let ctx' = eval ctx c in ctx' >>= (\ctx'' -> eval ctx'' (CWhile b c))
+  then let ctx' = eval ctx c in ctx' >>= (\ctx'' -> eval ctx'' (CWhile name b c))
   else Right ctx
 eval ctx (CAssert b1 c b2) = beval ctx b1 >>= \b1 ->
   if b1

@@ -59,5 +59,5 @@ hoareConditional _ _ = Left "hoareConditional: Cannot construct proof"
 -- | Hoare while rule
 hoareWhile :: Eq a => HoareTriple a -> ESHT a
 hoareWhile (HoareTriple (And b p1) c p2)
-  | p1 == p2  = Right $ HoareTriple p1 (CWhile b c) (And (Not b) p1)
+  | p1 == p2  = Right $ HoareTriple p1 (CWhile "" b c) (And (Not b) p1)
 hoareWhile _ = Left "hoareWhile: Cannot construct proof"
