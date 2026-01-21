@@ -6,7 +6,10 @@ import qualified Data.Map as M
 type Context a = M.Map a Integer
 
 aeval :: (Ord a, Eq a) => Context a -> Arith a -> Either String Integer
-aeval ctx (Var v)        = if M.member v ctx then Right (ctx M.! v) else Left "Element not found"
+aeval ctx (Var v) = 
+  case M.lookup v ctx of
+    Just val -> Right val
+    Nothing  -> Left $ "Variável não encontrada no contexto: " ++ show v
 aeval ctx Z              = Right 0
 aeval ctx (S a)          = aeval ctx a >>= \a -> Right $ 1 + a
 aeval ctx (Plus a1 a2)   = aeval ctx a1 >>= \a1 -> aeval ctx a2 >>= \a2 -> Right $ a1 + a2
@@ -19,8 +22,14 @@ beval ctx (PropVar (Lt a1 a2))   = aeval ctx a1 >>= \a1 -> aeval ctx a2 >>= \a2 
 beval ctx (PropVar (Gt a1 a2))   = aeval ctx a1 >>= \a1 -> aeval ctx a2 >>= \a2 -> Right $ a1 > a2
 beval ctx (PropVar (Le a1 a2))   = aeval ctx a1 >>= \a1 -> aeval ctx a2 >>= \a2 -> Right $ a1 <= a2
 beval ctx (PropVar (Ge a1 a2))   = aeval ctx a1 >>= \a1 -> aeval ctx a2 >>= \a2 -> Right $ a1 >= a2
-beval ctx (PropVar (ForAll x b)) = beval ctx b
-beval ctx (PropVar (Exists x b)) = beval ctx b
+beval ctx (PropVar (ForAll x b)) = 
+  let domain = [0..10] -- Domínio arbitrário para o interpretador
+      results = map (\val -> beval (M.insert x val ctx) b) domain
+  in sequence results >>= \bools -> Right (all id bools)
+beval ctx (PropVar (Exists x b)) = 
+  let domain = [0..10]
+      results = map (\val -> beval (M.insert x val ctx) b) domain
+  in sequence results >>= \bools -> Right (any id bools)
 beval ctx (Not b)     = beval ctx b >>= \b -> Right $ not b
 beval ctx (And b1 b2) = beval ctx b1 >>= \b1 -> beval ctx b2 >>= \b2 -> Right $ b1 && b2
 beval ctx (Or b1 b2)  = beval ctx b1 >>= \b1 -> beval ctx b2 >>= \b2 -> Right $ b1 || b2

@@ -48,7 +48,7 @@ substArith (S q) v e = S (substArith q v e)
 substArith (Plus a b) v e = Plus (substArith a v e) (substArith b v e)
 substArith (Minus a b) v e = Minus (substArith a v e) (substArith b v e)
 substArith (Mult a b) v e = Mult (substArith a v e) (substArith b v e)
-substArith x v e | x == v = e
+substArith (Var x) (Var v) e | x == v = e
 substArith x v e = x
 
 -- Substitution on equational level for a specific expression with another expression
