@@ -26,7 +26,8 @@ library
     Parser.Arith,
     Parser.PropCalc,
     Syntax,
-    Variables
+    Variables,
+    VCGen
   hs-source-dirs:      src
   build-depends:
     array,

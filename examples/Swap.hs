@@ -1,38 +1,44 @@
 module Swap where
 
-import Costs
-import Imp
-import Hoare
-import Oracle
+import VCGen  -- Certifique-se de que o seu wpc, vc e vcg estão aqui
 import Syntax
-import Variables
+-- import Variables -- Assume que A, B, C são construtores de Vars
 
-p :: PropCalc (FOL Vars)
+-- Pré-condição P
+p :: PropCalc (FOL String)
 p =
   And
     (And
-      (PropVar (Eq (Var A) Z))
-      (PropVar (Eq (Var B) Z)))
-    (PropVar (Eq (Var C) Z))
+      (PropVar (Eq (Var "A") (S Z))) -- Ex: A = 1
+      (PropVar (Eq (Var "B") (S (S Z))))) -- B = 2
+    (PropVar (Eq (Var "C") Z))
 
-q :: PropCalc (FOL Vars)
+-- Pós-condição Q (Valores trocados)
+q :: PropCalc (FOL String)
 q =
   And
-    (And
-      (PropVar (Eq (Var A) (Var B)))
-      (PropVar (Eq (Var B) (Var C))))
-    (PropVar (Eq (Var C) (Var A)))
+    (PropVar (Eq (Var "A") (S (S Z)))) -- A = 2
+    (PropVar (Eq (Var "B") (S Z)))    -- B = 1
 
-cmd :: Command Vars
+-- Comando de Swap
+cmd :: Command String
 cmd =
   CSequence
     (CSequence
-      (CAssign C (Var A))
-      (CAssign A (Var B)))
-    (CAssign B (Var C))
+      (CAssign "C" (Var "A"))
+      (CAssign "A" (Var "B")))
+    (CAssign "B" (Var "C"))
 
 main :: IO ()
 main = do
-  putStrLn "Swap program with cost:"
-  body <- costCmd (HoareTriple p cmd q)
-  print body
+  putStrLn "Gerando VCs para o programa Swap..."
+  
+  -- Definimos um custo alvo T para verificar (ex: 9 unidades)
+  -- De acordo com a Seção 4.3 da tese, cada atribuição tem um custo fixo [cite: 535, 587]
+  let custoAlvo = S (S (S (S (S (S (S (S (S Z)))))))) 
+
+  -- Chamada ao VCG conforme a Seção 4.4 [cite: 653, 707]
+  vcs <- vcg p cmd q custoAlvo
+  
+  putStrLn "As seguintes Verification Conditions foram geradas:"
+  mapM_ (putStrLn . show) vcs

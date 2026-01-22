@@ -9,7 +9,8 @@ aeval :: (Ord a, Eq a) => Context a -> Arith a -> Either String Integer
 aeval ctx (Var v) = 
   case M.lookup v ctx of
     Just val -> Right val
-    Nothing  -> Left $ "Variável não encontrada no contexto: " ++ show v
+    -- Nothing  -> Left $ "Variável não encontrada no contexto: " ++ show v
+    Nothing  -> Left $ "Variável não encontrada no contexto: "
 aeval ctx Z              = Right 0
 aeval ctx (S a)          = aeval ctx a >>= \a -> Right $ 1 + a
 aeval ctx (Plus a1 a2)   = aeval ctx a1 >>= \a1 -> aeval ctx a2 >>= \a2 -> Right $ a1 + a2
@@ -44,11 +45,11 @@ eval ctx (CWhile name b c)      = beval ctx b >>= \b' ->
   if b'
   then let ctx' = eval ctx c in ctx' >>= (\ctx'' -> eval ctx'' (CWhile name b c))
   else Right ctx
-eval ctx (CAssert b1 c b2) = beval ctx b1 >>= \b1 ->
-  if b1
-  then eval ctx c >>=
-       (\ctx' -> beval ctx' b2 >>= \b2 ->
-                  if b2
-                  then Right ctx'
-                  else Left "Assert: Post-condition does not match!")
-  else Left "Assert: Pre-condition does not match!"
+-- eval ctx (CAssert b1 c b2) = beval ctx b1 >>= \b1 ->
+--   if b1
+--   then eval ctx c >>=
+--        (\ctx' -> beval ctx' b2 >>= \b2 ->
+--                   if b2
+--                   then Right ctx'
+--                   else Left "Assert: Post-condition does not match!")
+--   else Left "Assert: Pre-condition does not match!"

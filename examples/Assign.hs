@@ -1,32 +1,35 @@
 module Assign where
 
-import Costs
-import Imp
-import Hoare
-import Oracle
+import VCGen
 import Syntax
-import Variables
 
-p :: PropCalc (FOL Vars)
-p = (PropVar (Eq (Var A) Z))
+-- P: A == 0
+p :: PropCalc (FOL String)
+p = PropVar (Eq (Var "A") Z)
 
-q :: PropCalc (FOL Vars)
-q = (PropVar (Eq (Var A) (S (S Z))))
+-- Q: A == 2
+q :: PropCalc (FOL String)
+q = PropVar (Eq (Var "A") (S (S Z)))
 
-two :: Arith Vars
+two :: Arith String
 two = S (S Z)
 
-cmd1 :: Command Vars
-cmd1 = CAssign A Z
+cmd1 :: Command String
+cmd1 = CAssign "A" Z
 
-cmd2 :: Command Vars
-cmd2 = CSequence cmd1 (CAssign A (Plus (Var A) two))
-
+-- cmd2: A := 0; A := A + 2;
+cmd2 :: Command String
+cmd2 = CSequence cmd1 (CAssign "A" (Plus (Var "A") two))
 
 main :: IO ()
 main = do
-  putStrLn "Assign program with cost:"
-  body1 <- costCmd (HoareTriple p cmd1 q)
-  print body1
-  body2 <- costCmd (HoareTriple p cmd2 q)
-  print body2
+  putStrLn "--- Teste de Atribuição ---"
+  
+  -- Custo esperado para cmd2: 
+  -- CAssign A Z (cost 2) + CAssign A (A+2) (cost 4) = 6
+  let custoAlvo = S (S (S (S (S (S Z))))) 
+
+  vcs <- vcg p cmd2 q custoAlvo
+  
+  putStrLn "Verification Conditions geradas:"
+  mapM_ (putStrLn . show) vcs
