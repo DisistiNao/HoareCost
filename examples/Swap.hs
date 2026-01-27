@@ -1,26 +1,27 @@
 module Swap where
 
-import VCGen  -- Certifique-se de que o seu wpc, vc e vcg estão aqui
+import VCGen
+import Solver (proveVCs)
 import Syntax
--- import Variables -- Assume que A, B, C são construtores de Vars
+import Utils (num)
 
--- Pré-condição P
+-- { a == 1 and b == 2 and c == 0 }
 p :: PropCalc (FOL String)
 p =
   And
     (And
-      (PropVar (Eq (Var "A") (S Z))) -- Ex: A = 1
-      (PropVar (Eq (Var "B") (S (S Z))))) -- B = 2
-    (PropVar (Eq (Var "C") Z))
+      (PropVar (Eq (Var "A") (num 1)))
+      (PropVar (Eq (Var "B") (num 2))))
+    (PropVar (Eq (Var "C") (num 0)))
 
--- Pós-condição Q (Valores trocados)
+-- { a == 2 and b == 1 and c == 0 }
 q :: PropCalc (FOL String)
 q =
   And
-    (PropVar (Eq (Var "A") (S (S Z)))) -- A = 2
-    (PropVar (Eq (Var "B") (S Z)))    -- B = 1
+    (PropVar (Eq (Var "A") (num 2)))
+    (PropVar (Eq (Var "B") (num 1)))
 
--- Comando de Swap
+-- c = a; a = b; b = c
 cmd :: Command String
 cmd =
   CSequence
@@ -33,12 +34,7 @@ main :: IO ()
 main = do
   putStrLn "Gerando VCs para o programa Swap..."
   
-  -- Definimos um custo alvo T para verificar (ex: 9 unidades)
-  -- De acordo com a Seção 4.3 da tese, cada atribuição tem um custo fixo [cite: 535, 587]
-  let custoAlvo = S (S (S (S (S (S (S (S (S Z)))))))) 
-
-  -- Chamada ao VCG conforme a Seção 4.4 [cite: 653, 707]
+  let custoAlvo = num 9 
   vcs <- vcg p cmd q custoAlvo
-  
-  putStrLn "As seguintes Verification Conditions foram geradas:"
-  mapM_ (putStrLn . show) vcs
+  -- mapM_ (putStrLn . show) vcs
+  proveVCs vcs

@@ -10,31 +10,21 @@ wpc CSkip q =
 wpc (CAssign v e) q = pure (subst q v e, Plus (costAExpr e) (S Z))
 
 wpc (CSequence c1 c2) q = do
-  (wp2, t2) <- wpc c2 q    -- Primeiro a segunda parte
-  (wp1, t1) <- wpc c1 wp2  -- Depois a primeira sobre o resultado
+  (wp2, t2) <- wpc c2 q
+  (wp1, t1) <- wpc c1 wp2
   pure (wp1, Plus t1 t2)
 
 wpc (CIfElse b c1 c2) q = do
   (wp1, t1) <- wpc c1 q
   (wp2, t2) <- wpc c2 q
-  -- (b -> wp1) ∧ (¬b -> wp2) e max(t1, t2) + costB(b)
   let wp = And (Imp b wp1) (Imp (Not b) wp2)
-  pure (wp, Plus (Plus t1 t2) (costBExpr b)) -- Simplificado: t1+t2 ou use um Max simbólico
+  pure (wp, Plus (Plus t1 t2) (costBExpr b))
 
 wpc (CWhile loopId b c) q = do
   OracleData inv variant n costFun <- getOracle loopId
   
-  -- 1. Calculamos o custo do corpo 'c'. 
-  -- Usamos o Invariante como pós-condição para o cálculo do custo.
   (_, bodyCost) <- wpc c inv 
-  
-  -- 2. Pré-condição (WP): I ∧ f >= 0
   let wp = And inv (PropVar (Ge variant Z))
-  
-  -- 3. Custo Total (Baseado na página 51 da tese):
-  -- O custo da condição (costBExpr b) acontece N+1 vezes.
-  -- O custo do corpo (bodyCost) acontece N vezes.
-  -- Adicionamos 1 para cada teste da condição (S Z).
   let totalCondCost = Mult (Plus (S Z) (costBExpr b)) (Plus n (S Z))
   let totalBodyCost = Mult bodyCost n
   
@@ -61,8 +51,6 @@ vc (CWhile loopId b c) q = do
   OracleData inv variant n costFun <- getOracle loopId
   
   let k = Var "k" 
-  -- Note que 'inv' e 'variant' já vêm como String do Oracle
-  -- Se você seguiu a Opção 1, o código abaixo compilará:
   let postBody = And inv (PropVar (Gt variant k))
   (wpS, tS) <- wpc c postBody
   vcsBody <- vc c inv
@@ -71,26 +59,19 @@ vc (CWhile loopId b c) q = do
     vc1 = PropVar (ForAll "k" (Imp (And (And inv b) (PropVar (Eq variant k))) wpS))
     vc2 = Imp (And inv (Not b)) q
     vc3 = Imp (And inv b) (PropVar (Le variant n))
-    
-    -- NOVA VC 4: O custo informado no oráculo t(k) deve cobrir o custo real tS
     vc4 = PropVar (ForAll "k" (Imp (And inv b) (PropVar (Ge costFun tS))))
     
   pure ([vc1, vc2, vc3, vc4] ++ vcsBody)
 
--- | Função principal VCG: {P} S {Q | T}
 vcg :: PropCalc (FOL String) -> Command String -> PropCalc (FOL String) -> Arith String -> IO [PropCalc (FOL String)]
 vcg p s q t = do
   (wp, ts) <- wpc s q
   vcs <- vc s q
   let 
     c1 = Imp p wp
-    -- DESCOMENTE e CORRIJA: 
-    -- Gera a meta de prova: Pré-condição implica que o Custo Alvo >= Custo Calculado
     c2 = Imp p (PropVar (Ge t ts)) 
-  pure (c1 : c2 : vcs) -- Adicione c2 aqui
+  pure (c1 : c2 : vcs)
 
-
-  ----------------------------------------------------------------------------------
 costAExpr :: Arith a -> Arith String
 costAExpr (Var _) = S Z
 costAExpr Z = S Z

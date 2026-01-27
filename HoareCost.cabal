@@ -25,6 +25,7 @@ library
     Oracle,
     Parser.Arith,
     Parser.PropCalc,
+    Solver,
     Syntax,
     Variables,
     VCGen

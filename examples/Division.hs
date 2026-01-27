@@ -1,32 +1,34 @@
 module Division where
 
 import VCGen
+import Solver (proveVCs)
 import Syntax
+import Utils (num)
 
--- Pré-condição P
+-- { r == x and q == 0 and y > 0 and x >= 0 }
 pre :: PropCalc (FOL String)
 pre =
   And
     (And (PropVar (Eq (Var "R") (Var "X"))) (PropVar (Eq (Var "Q") Z)))
     (And (PropVar (Gt (Var "Y") Z)) (PropVar (Ge (Var "X") Z)))
 
--- Pós-condição Q
+-- { x == r + y * q and r < y }
 post :: PropCalc (FOL String)
 post =
   And
     (PropVar (Eq (Var "X") (Plus (Var "R") (Mult (Var "Y") (Var "Q")))))
     (PropVar (Lt (Var "R") (Var "Y")))
 
+-- y <= r
 cond :: PropCalc (FOL String)
 cond = PropVar (Le (Var "Y") (Var "R"))
 
 loopBody :: Command String
 loopBody =
   CSequence
-    (CAssign "R" (Minus (Var "R") (Var "Y")))
-    (CAssign "Q" (Plus (Var "Q") (S Z)))
+    (CAssign "R" (Minus (Var "R") (Var "Y"))) -- r = r - y
+    (CAssign "Q" (Plus (Var "Q") (num 1)))    -- q = q + 1
 
--- r := x; q := 0; while (y <= r) ...
 cmd :: Command String
 cmd =
   CSequence
@@ -37,13 +39,11 @@ cmd =
 
 main :: IO ()
 main = do
-  putStrLn "--- Teste de Divisão (Invariante via Oráculo) ---"
+  putStrLn ""
+  putStrLn "--- Teste de Divisão (Custo Linear: 20x + 5) ---"
+  putStrLn ""
   
-  -- Definimos um custo alvo simbólico alto para a prova
-  let custoAlvo = Mult (S (S (S Z))) (Var "X") 
-
-  -- Isso vai disparar o Oracle.getLine no terminal!
+  let custoAlvo = Plus (Mult (num 20) (Var "X")) (num 10)
   vcs <- vcg pre cmd post custoAlvo
-  
-  putStrLn "\nVerification Conditions geradas para a Divisão:"
-  mapM_ (putStrLn . show) vcs
+  -- mapM_ (putStrLn . show) vcs
+  proveVCs vcs
