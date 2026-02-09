@@ -1,4 +1,4 @@
-# HoareCost 🚀
+# HoareCost
 
 Ferramenta de verificação formal e análise de complexidade assintótica desenvolvida em Haskell. Este projeto estende a Lógica de Hoare tradicional para incluir custos de execução, gerando Condições de Verificação (VCs) que são validadas automaticamente pelo solucionador SMT **Z3** através da biblioteca **SBV**.
 
