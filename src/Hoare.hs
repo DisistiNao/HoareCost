@@ -9,9 +9,9 @@ data HoareTriple a =
 
 type ESHT a = Either String (HoareTriple a)
 
--- | Hoare skip rule
-hoareSkip :: PropCalc (FOL a) -> ESHT a
-hoareSkip q = Right $ HoareTriple q CSkip q
+-- -- | Hoare skip rule
+-- hoareSkip :: PropCalc (FOL a) -> ESHT a
+-- hoareSkip q = Right $ HoareTriple q CSkip q
 
 -- | Hoare assignment rule
 hoareAssignment :: Eq a => a -> Arith a -> PropCalc (FOL a) -> ESHT a

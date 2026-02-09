@@ -24,7 +24,7 @@ beval ctx (PropVar (Gt a1 a2))   = aeval ctx a1 >>= \a1 -> aeval ctx a2 >>= \a2 
 beval ctx (PropVar (Le a1 a2))   = aeval ctx a1 >>= \a1 -> aeval ctx a2 >>= \a2 -> Right $ a1 <= a2
 beval ctx (PropVar (Ge a1 a2))   = aeval ctx a1 >>= \a1 -> aeval ctx a2 >>= \a2 -> Right $ a1 >= a2
 beval ctx (PropVar (ForAll x b)) = 
-  let domain = [0..10] -- Domínio arbitrário para o interpretador
+  let domain = [0..10]
       results = map (\val -> beval (M.insert x val ctx) b) domain
   in sequence results >>= \bools -> Right (all id bools)
 beval ctx (PropVar (Exists x b)) = 
@@ -37,7 +37,7 @@ beval ctx (Or b1 b2)  = beval ctx b1 >>= \b1 -> beval ctx b2 >>= \b2 -> Right $ 
 beval ctx (Imp b1 b2) = beval ctx b1 >>= \b1 -> beval ctx b2 >>= \b2 -> Right $ not b1 || b2
 
 eval :: (Ord a, Eq a) => Context a -> Command a -> Either String (Context a)
-eval ctx CSkip             = Right ctx
+-- eval ctx CSkip             = Right ctx
 eval ctx (CAssign c v)     = aeval ctx v >>= \v -> Right $ M.insert c v ctx
 eval ctx (CSequence c1 c2) = let ctx' = eval ctx c1 in ctx' >>= (\ctx'' -> eval ctx'' c2)
 eval ctx (CIfElse b c1 c2) = beval ctx b >>= \b -> eval ctx $ if b then c1 else c2

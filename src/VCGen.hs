@@ -4,8 +4,8 @@ import Syntax
 import Oracle
 
 wpc :: Command String -> PropCalc (FOL String) -> IO (PropCalc (FOL String), Arith String)
-wpc CSkip q = 
-  pure (q, S Z)
+-- wpc CSkip q = 
+--   pure (q, S Z)
 
 wpc (CAssign v e) q = pure (subst q v e, Plus (costAExpr e) (S Z))
 
@@ -18,22 +18,23 @@ wpc (CIfElse b c1 c2) q = do
   (wp1, t1) <- wpc c1 q
   (wp2, t2) <- wpc c2 q
   let wp = And (Imp b wp1) (Imp (Not b) wp2)
-  pure (wp, Plus (Plus t1 t2) (costBExpr b))
+  pure (wp, Plus (Plus t1 t2) (costBExpr b))  -- Here isn't t1 + t2, is max(t1, t2)
 
 wpc (CWhile loopId b c) q = do
   OracleData inv variant n costFun <- getOracle loopId
   
   (_, bodyCost) <- wpc c inv 
-  let wp = And inv (PropVar (Ge variant Z))
   let totalCondCost = Mult (Plus (S Z) (costBExpr b)) (Plus n (S Z))
   let totalBodyCost = Mult bodyCost n
   
   let cost = Plus totalCondCost totalBodyCost
   
+  let wp = And inv (PropVar (Ge variant Z))
+  
   pure (wp, cost)
 
 vc :: Command String -> PropCalc (FOL String) -> IO [PropCalc (FOL String)]
-vc CSkip _ = pure []
+-- vc CSkip _ = pure []
 vc (CAssign _ _) _ = pure []
 
 vc (CSequence c1 c2) q = do

@@ -1,8 +1,7 @@
 module Main where
 
-import Costs
 import Imp
-import Hoare
+-- import Hoare
 import Lexer.Lexer
 import Parser.Arith
 import Parser.PropCalc

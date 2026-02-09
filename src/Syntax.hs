@@ -34,23 +34,15 @@ data FOL a =
   deriving (Eq, Show)
 
 data Command a =
-  CSkip
-  | CAssign a (Arith a)
+  -- CSkip
+  -- | CAssign a (Arith a)
+  CAssign a (Arith a)
   | CSequence (Command a) (Command a)
   | CIfElse (PropCalc (FOL a)) (Command a) (Command a)
   | CWhile String (PropCalc (FOL a)) (Command a)
   -- | CAssert (PropCalc (FOL a)) (Command a) (PropCalc (FOL a))
   deriving (Show)
 
--- -- Substitution function for arithmetical formulas
--- substArith :: Eq a => Arith a -> Arith a -> Arith a -> Arith a
--- substArith (S q) v e = S (substArith q v e)
--- substArith (Plus a b) v e = Plus (substArith a v e) (substArith b v e)
--- substArith (Minus a b) v e = Minus (substArith a v e) (substArith b v e)
--- substArith (Mult a b) v e = Mult (substArith a v e) (substArith b v e)
--- substArith (Var x) (Var v) e | x == v = e
--- substArith x v e = x
-------------------------------------------------------------------------------------
 substFOL :: Eq a => FOL a -> a -> Arith a -> FOL a
 substFOL (Eq a1 a2) v e = Eq (substArith a1 v e) (substArith a2 v e)
 substFOL (Lt a1 a2) v e = Lt (substArith a1 v e) (substArith a2 v e)
@@ -58,7 +50,6 @@ substFOL (Gt a1 a2) v e = Gt (substArith a1 v e) (substArith a2 v e)
 substFOL (Le a1 a2) v e = Le (substArith a1 v e) (substArith a2 v e)
 substFOL (Ge a1 a2) v e = Ge (substArith a1 v e) (substArith a2 v e)
 
--- Se a variável quantificada for a mesma que queremos substituir, paramos (escopo)
 substFOL (ForAll x p) v e 
   | x == v    = ForAll x p
   | otherwise = ForAll x (subst p v e)
@@ -66,7 +57,6 @@ substFOL (Exists x p) v e
   | x == v    = Exists x p
   | otherwise = Exists x (subst p v e)
 
--- | Função subst solicitada para o wpc
 subst :: Eq a => PropCalc (FOL a) -> a -> Arith a -> PropCalc (FOL a)
 subst (PropVar f) v e = PropVar (substFOL f v e)
 subst (Not p) v e     = Not (subst p v e)
@@ -82,62 +72,3 @@ substArith (S q) v e            = S (substArith q v e)
 substArith (Plus a b) v e       = Plus (substArith a v e) (substArith b v e)
 substArith (Minus a b) v e      = Minus (substArith a v e) (substArith b v e)
 substArith (Mult a b) v e       = Mult (substArith a v e) (substArith b v e)
-------------------------------------------------------------------------------------
--- -- Substitution on equational level for a specific expression with another expression
--- substPropCalc :: Eq a => Proof (PropCalc (FOL a)) -> Arith a -> Arith a -> Proof (PropCalc (FOL a))
--- substPropCalc (Proof f) v e = Proof $ go f v e
---   where
---     go :: Eq a => PropCalc (FOL a) -> Arith a -> Arith a -> PropCalc (FOL a)
---     go (PropVar (Eq a b)) v e     = PropVar (Eq (substArith a v e) (substArith b v e))
---     go (PropVar (Lt a b)) v e     = PropVar (Lt (substArith a v e) (substArith b v e))
---     go (PropVar (Gt a b)) v e     = PropVar (Gt (substArith a v e) (substArith b v e))
---     go (PropVar (Le a b)) v e     = PropVar (Le (substArith a v e) (substArith b v e))
---     go (PropVar (Ge a b)) v e     = PropVar (Ge (substArith a v e) (substArith b v e))
---     go (PropVar (ForAll x y)) v e = PropVar (ForAll x (go y v e))
---     go (PropVar (Exists x y)) v e = PropVar (Exists x (go y v e))
---     go (Not x) v e                = Not (go x v e)
---     go (And x y) v e              = And (go x v e) (go y v e)
---     go (Or x y) v e               = Or (go x v e) (go y v e)
---     go (Imp x y) v e              = Imp (go x v e) (go y v e)
-
--- -- Find bound variables in a formula
--- getBoundVars :: Eq a => PropCalc (FOL a) -> [a]
--- getBoundVars x = nub $ go x
---   where
---     go (PropVar (ForAll x y)) = x : go y
---     go (PropVar (Exists x y)) = x : go y
---     go _ = []
-
--- -- Get all variables used in an arithmetic formula
--- getArithVars :: Eq a => Arith a -> [a]
--- getArithVars x = nub $ go x
---   where
---     go (Var a) = [a]
---     go (S x) = go x
---     go (Plus a b) = go a ++ go b
---     go (Minus a b) = go a ++ go b
---     go (Mult a b) = go a ++ go b
---     go _ = []
-
--- -- Get all used variables
--- getVars :: Eq a => PropCalc (FOL a) -> [a]
--- getVars x = nub $ go x
---   where
---     go (PropVar (ForAll x y)) = go y
---     go (PropVar (Exists x y)) = go y
---     go (PropVar (Lt a b)) = getArithVars a ++ getArithVars b
---     go (PropVar (Gt a b)) = getArithVars a ++ getArithVars b
---     go (PropVar (Le a b)) = getArithVars a ++ getArithVars b
---     go (PropVar (Ge a b)) = getArithVars a ++ getArithVars b
---     go (PropVar (Eq a b)) = getArithVars a ++ getArithVars b
---     go (Not x) = go x
---     go (And x y) = go x ++ go y
---     go (Or x y) = go x ++ go y
---     go (Imp x y) = go x ++ go y
-
--- -- Get all free variables
--- getFreeVars :: Eq a => PropCalc (FOL a) -> [a]
--- getFreeVars x = getVars x \\ getBoundVars x
-
--- fromProof :: Proof a -> a
--- fromProof (Proof a) = a

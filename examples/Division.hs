@@ -40,7 +40,7 @@ cmd =
 main :: IO ()
 main = do
   putStrLn ""
-  putStrLn "--- Teste de Divisão (Custo Linear: 20x + 5) ---"
+  putStrLn "--- Teste de Divisão (Custo Linear: 20x + 10) ---"
   putStrLn ""
   
   let custoAlvo = Plus (Mult (num 20) (Var "X")) (num 10)
