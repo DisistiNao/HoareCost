@@ -22,7 +22,7 @@ Para este exemplo, é necessário passar os seguintes valores para o **Oráculo*
 
 | Parâmetro | Valor para Copiar e Colar |
 | :--- | :--- |
-| **Invariant** | `And (PropVar (Eq (Var "X") (Plus (Mult (Var "Q") (Var "Y")) (Var "R")))) (And (PropVar (Gt (Var "Y") (Z))) (PropVar (Ge (Var "R") (Z))))` |
-| **Variant** | `Minus (Var "X") (Var "R")` |
-| **Num. Iterations**| `Var "X"` |
+| **Invariant** | `And (PropVar (Eq (Var X) (Plus (Mult (Var Q) (Var Y)) (Var R)))) (And (PropVar (Gt (Var Y) (Z))) (PropVar (Ge (Var R) (Z))))` |
+| **Variant** | `Minus (Var X) (Var R)` |
+| **Num. Iterations**| `Var X` |
 | **Cost Function** | `S (S (S (S (S (S (S (S (S (S Z)))))))))` |
