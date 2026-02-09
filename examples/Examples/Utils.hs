@@ -1,4 +1,4 @@
-module Utils where
+module Examples.Utils where
 
 import Syntax
 

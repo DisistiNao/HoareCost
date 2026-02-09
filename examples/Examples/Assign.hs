@@ -1,9 +1,9 @@
-module Assign where
+module Examples.Assign where
 
 import VCGen
 import Solver (proveVCs)
 import Syntax
-import Utils (num)
+import Examples.Utils (num)
 
 -- { a == 0 }
 p :: PropCalc (FOL String)

@@ -1,9 +1,9 @@
-module Division where
+module Examples.Division where
 
 import VCGen
 import Solver (proveVCs)
 import Syntax
-import Utils (num)
+import Examples.Utils (num)
 
 -- { r == x and q == 0 and y > 0 and x >= 0 }
 pre :: PropCalc (FOL String)

@@ -26,3 +26,4 @@ Para este exemplo, é necessário passar os seguintes valores para o **Oráculo*
 | **Variant** | `Minus (Var X) (Var R)` |
 | **Num. Iterations**| `Var X` |
 | **Cost Function** | `S (S (S (S (S (S (S (S (S (S Z)))))))))` |
+

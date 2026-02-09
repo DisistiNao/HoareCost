@@ -1,9 +1,9 @@
-module Swap where
+module Examples.Swap where
 
 import VCGen
 import Solver (proveVCs)
 import Syntax
-import Utils (num)
+import Examples.Utils (num)
 
 -- { a == 1 and b == 2 and c == 0 }
 p :: PropCalc (FOL String)
