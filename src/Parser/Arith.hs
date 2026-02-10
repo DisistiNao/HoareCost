@@ -3,6 +3,7 @@ module Parser.Arith (arithParser) where
 
 import Lexer.Lexer hiding (lexer)
 import Syntax
+import Variables
 import qualified Data.Array as Happy_Data_Array
 import qualified Data.Bits as Bits
 import Control.Applicative(Applicative(..))
@@ -325,7 +326,7 @@ parseError (Token (line, col) lexeme)
 lexer :: (Token -> Alex a) -> Alex a
 lexer = (=<< alexMonadScan)
 
-arithParser :: String -> Either String (Arith String)
+arithParser :: String -> Either String (Arith Vars)
 arithParser input 
   = runAlex input parser
 {-# LINE 1 "templates/GenericTemplate.hs" #-}

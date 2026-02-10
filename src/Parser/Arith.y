@@ -3,6 +3,7 @@ module Parser.Arith (arithParser) where
 
 import Lexer.Lexer hiding (lexer)
 import Syntax
+import Variables
 }
 
 -- %name parser Program
@@ -46,7 +47,7 @@ parseError (Token (line, col) lexeme)
 lexer :: (Token -> Alex a) -> Alex a
 lexer = (=<< alexMonadScan)
 
-arithParser :: String -> Either String (Arith String)
+arithParser :: String -> Either String (Arith Vars)
 arithParser input 
   = runAlex input parser 
 }

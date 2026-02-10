@@ -6,6 +6,8 @@
 module Lexer.Lexer where
 
 import Control.Monad
+import Text.Read (readMaybe)
+import Variables
 
 #if __GLASGOW_HASKELL__ >= 603
 #include "ghcconfig.h"
@@ -12542,7 +12544,7 @@ alex_actions = array (0 :: Int, 61)
   , (0,alex_action_29)
   ]
 
-{-# LINE 62 "src/Lexer/Lexer.x" #-}
+{-# LINE 64 "src/Lexer/Lexer.x" #-}
 
 
 -- user state 
@@ -12607,7 +12609,7 @@ data Lexeme
   | TRParen
   | TEOF
 
-  | TIdent String
+  | TIdent Vars
   | TNumber Int
   deriving (Eq, Ord, Show)
 
@@ -12615,9 +12617,11 @@ position :: AlexPosn -> (Int, Int)
 position (AlexPn _ x y) = (x,y)
 
 mkIdent :: AlexAction Token 
-mkIdent (st, _, _, str) len = 
-  pure $ Token (position st) (TIdent (take len str))
-
+mkIdent (st, _, _, str) len = do
+  let s = take len str
+  case readMaybe s of
+    Just v  -> pure $ Token (position st) (TIdent v)
+    Nothing -> alexError $ "Lexer Errpr: Variable '" ++ s ++ "' not allowed."
 
 mkNumber :: AlexAction Token
 mkNumber (st, _, _, str) len 

@@ -10,13 +10,14 @@ import Data.List
 import Parser.Arith
 import Parser.PropCalc
 import Syntax
+import Variables
 
 data OracleData = OracleData
     {
-        invariant :: PropCalc (FOL String),
-        variant :: Arith String,
-        numIterations :: Arith String,
-        costFunction :: Arith String
+        invariant :: PropCalc (FOL Vars),
+        variant :: Arith Vars,
+        numIterations :: Arith Vars,
+        costFunction :: Arith Vars
     }
     deriving (Show)
 
@@ -51,14 +52,14 @@ askForOracle = catch readInputs handleError
             putStr "Number of Iterations: "
             hFlush stdout
             nStr <- getLine
-            n <- parseOrFail (arithParser nStr)
+            num <- parseOrFail (arithParser nStr)
 
             putStr "Cost Function of While (example: k -> 1 + k): "
             hFlush stdout
             tStr <- getLine
-            t <- parseOrFail (arithParser tStr)
+            cost <- parseOrFail (arithParser tStr)
 
-            pure $ OracleData inv var n t
+            pure $ OracleData inv var num cost
         
         handleError :: SomeException -> IO OracleData
         handleError _ = do

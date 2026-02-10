@@ -3,6 +3,7 @@ module Parser.PropCalc (propCalcParser) where
 
 import Lexer.Lexer hiding (lexer)
 import Syntax
+import Variables
 }
 
 %name parser Prop
@@ -78,7 +79,7 @@ parseError (Token (l,c) lex)
 lexer :: (Token -> Alex a) -> Alex a
 lexer = (=<< alexMonadScan)
 
-propCalcParser :: String -> Either String (PropCalc (FOL String))
+propCalcParser :: String -> Either String (PropCalc (FOL Vars))
 propCalcParser input =
   runAlex input parser
 }

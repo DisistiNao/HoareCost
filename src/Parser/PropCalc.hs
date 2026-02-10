@@ -3,6 +3,7 @@ module Parser.PropCalc (propCalcParser) where
 
 import Lexer.Lexer hiding (lexer)
 import Syntax
+import Variables
 import qualified Data.Array as Happy_Data_Array
 import qualified Data.Bits as Bits
 import Control.Applicative(Applicative(..))
@@ -849,7 +850,7 @@ parseError (Token (l,c) lex)
 lexer :: (Token -> Alex a) -> Alex a
 lexer = (=<< alexMonadScan)
 
-propCalcParser :: String -> Either String (PropCalc (FOL String))
+propCalcParser :: String -> Either String (PropCalc (FOL Vars))
 propCalcParser input =
   runAlex input parser
 {-# LINE 1 "templates/GenericTemplate.hs" #-}
