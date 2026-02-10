@@ -1,19 +1,23 @@
 {
 {-# OPTIONS_GHC -Wno-name-shadowing #-}
-module Lexer.Lexer where
+module Compiler.Lexer.Lexer where
 
 import Control.Monad
+import Text.Read (readMaybe)
+import Variables
 }
 
 %wrapper "monadUserState"
 
 $digit = 0-9            -- digits
 $alpha = [a-zA-Z]       -- alphabetic characters
+$string_char = [^\"\\\n]
 
 -- second RE macros
 
 @identifier = $alpha[$alpha $digit]* -- identifiers
 @number     = $digit+
+@string     = \"($string_char)*\"  -- string literals
 
 -- tokens declarations
 
@@ -27,6 +31,9 @@ tokens :-
       <state_comment> "*/"                     {unnestComment}
       <state_comment> .                        ;  
       <state_comment> \n                       ;
+
+      -- string literals
+      <0> @string       { mkString }
 
       -- other tokens 
 
@@ -60,13 +67,13 @@ tokens :-
       <0> "("           {simpleToken TLParen}
       <0> ")"           {simpleToken TRParen}
       <0> "|"           {simpleToken TBar}
+      <0> "."           {simpleToken TDot}
       <0> ";"           {simpleToken TSemicolons}
       
       <0> @number       {mkNumber}
       <0> @identifier   {mkIdent}
 
 {
-
 -- user state 
 
 data AlexUserState 
@@ -133,24 +140,43 @@ data Lexeme
 
   | TLBracket
   | TRBracket
-  | TLParenTWhile
-  | TRParenTWhile
+  | TLParen
+  | TRParen
   | TBar
+  | TDot
   | TSemicolons
   
+  | TString String
   | TEOF
 
-  | TIdent String
+  | TIdent Vars
   | TNumber Int
   deriving (Eq, Ord, Show)
 
 position :: AlexPosn -> (Int, Int)
 position (AlexPn _ x y) = (x,y)
 
-mkIdent :: AlexAction Token 
-mkIdent (st, _, _, str) len = 
-  pure $ Token (position st) (TIdent (take len str))
+mkString :: AlexAction Token
+mkString (st, _, _, str) len = do
+  let s = take len str
+  let content = init (tail s)
+  let processed = processEscapes content
+  pure $ Token (position st) (TString processed)
+  where
+    processEscapes [] = []
+    processEscapes ('\\':'n':xs) = '\n' : processEscapes xs
+    processEscapes ('\\':'r':xs) = '\r' : processEscapes xs
+    processEscapes ('\\':'t':xs) = '\t' : processEscapes xs
+    processEscapes ('\\':'\\':xs) = '\\' : processEscapes xs
+    processEscapes ('\\':'\"':xs) = '\"' : processEscapes xs
+    processEscapes (x:xs) = x : processEscapes xs
 
+mkIdent :: AlexAction Token 
+mkIdent (st, _, _, str) len = do
+  let s = take len str
+  case readMaybe s of
+    Just v  -> pure $ Token (position st) (TIdent v)
+    Nothing -> alexError $ "Lexer Error: Variable '" ++ s ++ "' not allowed."
 
 mkNumber :: AlexAction Token
 mkNumber (st, _, _, str) len 
@@ -160,8 +186,6 @@ mkNumber (st, _, _, str) len
 simpleToken :: Lexeme -> AlexAction Token
 simpleToken lx (st, _, _, _) _
   = return $ Token (position st) lx
-
--- dealing with comments
 
 nestComment :: AlexAction Token
 nestComment input len = do

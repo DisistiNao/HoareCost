@@ -53,8 +53,11 @@ executable examples
     Examples.Utils,
     Examples.Swap,
     Examples.Division,
-    Examples.Assign
+    Examples.Assign,
+    Compiler.Lexer.Lexer,
+    Compiler.Parser.Parser
   build-depends:
+    array,
     base >=4.13 && <4.22,
     HoareCost
   default-language:    Haskell2010
