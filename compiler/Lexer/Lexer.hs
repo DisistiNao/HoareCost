@@ -1,9 +1,9 @@
 {-# OPTIONS_GHC -fno-warn-unused-binds -fno-warn-missing-signatures #-}
 {-# LANGUAGE CPP #-}
-{-# LINE 1 "examples/Compiler/Lexer/Lexer.x" #-}
+{-# LINE 1 "compiler/Lexer/Lexer.x" #-}
 
 {-# OPTIONS_GHC -Wno-name-shadowing #-}
-module Compiler.Lexer.Lexer where
+module Lexer.Lexer where
 
 import Control.Monad
 import Text.Read (readMaybe)
@@ -12839,7 +12839,7 @@ alex_actions = array (0 :: Int, 67)
   , (0,alex_action_38)
   ]
 
-{-# LINE 76 "examples/Compiler/Lexer/Lexer.x" #-}
+{-# LINE 76 "compiler/Lexer/Lexer.x" #-}
 
 -- user state 
 

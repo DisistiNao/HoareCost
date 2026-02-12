@@ -1,13 +1,12 @@
 {-# OPTIONS_GHC -w #-}
-module Compiler.Parser.Parser (run) where
--- module Compiler.Parser.Parser (hcParser) where
+module Parser.Parser (run) where
 
-import Compiler.Lexer.Lexer hiding (lexer)
+import Lexer.Lexer hiding (lexer)
 import Syntax
 import Variables
 import VCGen
 import Solver (proveVCs)
-import Examples.Utils (num)
+import Utils (num)
 import qualified Data.Array as Happy_Data_Array
 import qualified Data.Bits as Bits
 import Control.Applicative(Applicative(..))

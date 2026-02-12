@@ -1,13 +1,12 @@
 {
-module Compiler.Parser.Parser (run) where
--- module Compiler.Parser.Parser (hcParser) where
+module Parser.Parser (run) where
 
-import Compiler.Lexer.Lexer hiding (lexer)
+import Lexer.Lexer hiding (lexer)
 import Syntax
 import Variables
 import VCGen
 import Solver (proveVCs)
-import Examples.Utils (num)
+import Utils (num)
 }
 
 %name parser Prog

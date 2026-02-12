@@ -46,16 +46,29 @@ executable HoareCost
   -- hs-source-dirs:
   default-language:    Haskell2010
 
-executable examples
+-- executable examples
+--   main-is:             Main.hs
+--   hs-source-dirs:      examples
+--   other-modules: 
+--     Examples.Utils,
+--     Examples.Swap,
+--     Examples.Division,
+--     Examples.Assign,
+--     Compiler.Lexer.Lexer,
+--     Compiler.Parser.Parser
+--   build-depends:
+--     array,
+--     base >=4.13 && <4.22,
+--     HoareCost
+--   default-language:    Haskell2010
+
+executable compiler
   main-is:             Main.hs
-  hs-source-dirs:      examples
+  hs-source-dirs:      compiler
   other-modules: 
-    Examples.Utils,
-    Examples.Swap,
-    Examples.Division,
-    Examples.Assign,
-    Compiler.Lexer.Lexer,
-    Compiler.Parser.Parser
+    Utils,
+    Lexer.Lexer,
+    Parser.Parser
   build-depends:
     array,
     base >=4.13 && <4.22,

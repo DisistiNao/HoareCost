@@ -1,6 +1,6 @@
 {
 {-# OPTIONS_GHC -Wno-name-shadowing #-}
-module Compiler.Lexer.Lexer where
+module Lexer.Lexer where
 
 import Control.Monad
 import Text.Read (readMaybe)
