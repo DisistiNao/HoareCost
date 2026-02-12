@@ -21,6 +21,7 @@ import Variables
     'Plus'      { Token _ TPlus }
     'Minus'     { Token _ TMinus }
     'Mult'      { Token _ TMult }
+    'Max'       { Token _ TMax }
 
     'PropVar'   { Token _ TPropVar }
     'Not'       { Token _ TNot }
@@ -62,10 +63,10 @@ Exp
     : 'Var' id                           { Var $2 }
     | 'Z'                                { Z }
     | 'S' Exp                            { S $2 }
-    | 'S' '(' Exp ')'                    { S $3 }
     | 'Plus' '(' Exp ')' '(' Exp ')'     { Plus $3 $6 }
     | 'Minus' '(' Exp ')' '(' Exp ')'    { Minus $3 $6 }
     | 'Mult' '(' Exp ')' '(' Exp ')'     { Mult $3 $6 }
+    | 'Max' '(' Exp ')' '(' Exp ')'      { Max $3 $6 }
     | '(' Exp ')'                        { $2 }
 
 {

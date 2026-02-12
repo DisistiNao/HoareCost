@@ -19,7 +19,7 @@ wpc (CIfElse cond c1 c2) pos = do
   (wp1, t1) <- wpc c1 pos
   (wp2, t2) <- wpc c2 pos
   let wp = And (Imp cond wp1) (Imp (Not cond) wp2)
-  pure (wp, Plus (Plus t1 t2) (costBExpr cond))  -- Here isn't t1 + t2, is max(t1, t2)
+  pure (wp, Plus (Max t1 t2) (costBExpr cond))
 
 wpc (CWhile loopId cond body) pos = do
   OracleData inv variant n costFun <- getOracle loopId
@@ -81,6 +81,7 @@ costAExpr (S a) = costAExpr a
 costAExpr (Plus a1 a2)  = Plus (Plus (costAExpr a1) (costAExpr a2)) (S Z)
 costAExpr (Minus a1 a2) = Plus (Plus (costAExpr a1) (costAExpr a2)) (S Z)
 costAExpr (Mult a1 a2)  = Plus (Plus (costAExpr a1) (costAExpr a2)) (S Z)
+costAExpr (Max a1 a2)   = Z
 
 costBExpr :: PropCalc (FOL a) -> Arith Vars
 costBExpr (PropVar (Lt a1 a2)) = Plus (Plus (costAExpr a1) (costAExpr a2)) (S Z)

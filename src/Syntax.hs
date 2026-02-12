@@ -9,6 +9,7 @@ data Arith a =
   | Plus (Arith a) (Arith a)
   | Minus (Arith a) (Arith a)
   | Mult (Arith a) (Arith a)
+  | Max (Arith a) (Arith a)
   deriving (Eq, Show)
 
 data PropCalc a =
@@ -72,3 +73,4 @@ substArith (S q) v e            = S (substArith q v e)
 substArith (Plus a b) v e       = Plus (substArith a v e) (substArith b v e)
 substArith (Minus a b) v e      = Minus (substArith a v e) (substArith b v e)
 substArith (Mult a b) v e       = Mult (substArith a v e) (substArith b v e)
+substArith (Max a b) v e        = Max (substArith a v e) (substArith b v e)

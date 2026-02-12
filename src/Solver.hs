@@ -17,6 +17,7 @@ getFreeVars p = nub (goProp p)
     goArith (Plus a b)  = goArith a ++ goArith b
     goArith (Minus a b) = goArith a ++ goArith b
     goArith (Mult a b)  = goArith a ++ goArith b
+    goArith (Max a b)   = goArith a ++ goArith b
 
     goFOL (Eq a b)        = goArith a ++ goArith b
     goFOL (Lt a b)        = goArith a ++ goArith b
@@ -42,6 +43,7 @@ transArith (S a) k env        = do { v <- transArith a k env; return (v + 1) }
 transArith (Plus a b) k env   = do { v1 <- transArith a k env; v2 <- transArith b k env; return (v1 + v2) }
 transArith (Minus a b) k env  = do { v1 <- transArith a k env; v2 <- transArith b k env; return (v1 - v2) }
 transArith (Mult a b) k env   = do { v1 <- transArith a k env; v2 <- transArith b k env; return (v1 * v2) }
+transArith (Max a b) k env    = do { v1 <- transArith a k env; v2 <- transArith b k env; return (smax v1 v2) }
 
 transFormula :: PropCalc (FOL Vars) -> Env -> Symbolic SBool
 transFormula f env = go f 0

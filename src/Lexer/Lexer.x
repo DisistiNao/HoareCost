@@ -40,6 +40,7 @@ tokens :-
       <0> "Plus"        {simpleToken TPlus}
       <0> "Minus"       {simpleToken TMinus}
       <0> "Mult"        {simpleToken TMult}
+      <0> "Max"         {simpleToken TMax}
 
       <0> "PropVar"     {simpleToken TPropVar}
       <0> "Not"         {simpleToken TNot}
@@ -107,6 +108,7 @@ data Lexeme
   | TPlus
   | TMinus
   | TMult
+  | TMax
 
   | TPropVar
   | TNot
