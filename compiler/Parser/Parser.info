@@ -27,10 +27,11 @@ Grammar
 	Exp -> Exp '+' Exp                                 (18)
 	Exp -> Exp '-' Exp                                 (19)
 	Exp -> Exp '*' Exp                                 (20)
-	Cmd -> id '=' Exp                                  (21)
-	Cmd -> 'if' Prop 'then' Cmd 'end' 'else' Cmd 'end'   (22)
-	Cmd -> 'while' string Prop 'do' Cmd 'end'          (23)
-	Cmd -> Cmd ';' Cmd                                 (24)
+	Cmd -> 'skip'                                      (21)
+	Cmd -> id '=' Exp                                  (22)
+	Cmd -> 'if' Prop 'then' Cmd 'end' 'else' Cmd 'end'   (23)
+	Cmd -> 'while' string Prop 'do' Cmd 'end'          (24)
+	Cmd -> Cmd ';' Cmd                                 (25)
 
 -----------------------------------------------------------------------------
 Terminals
@@ -52,6 +53,7 @@ Terminals
 	'<='           { Token _ TLe }
 	'exists'       { Token _ TExists }
 	'forall'       { Token _ TForAll }
+	'skip'         { Token _ TSkip }
 	'='            { Token _ TAssign }
 	'if'           { Token _ TIf }
 	'then'         { Token _ TThen }
@@ -75,7 +77,7 @@ Non-terminals
 	Prop            rules 2, 3, 4, 5, 6, 7
 	FOLExpr         rules 8, 9, 10, 11, 12, 13, 14
 	Exp             rules 15, 16, 17, 18, 19, 20
-	Cmd             rules 21, 22, 23, 24
+	Cmd             rules 21, 22, 23, 24, 25
 
 -----------------------------------------------------------------------------
 States
@@ -297,9 +299,9 @@ State 14
 	Prop -> '(' Prop . 'and' Prop ')'                   (rule 4)
 	Prop -> '(' Prop . 'or' Prop ')'                    (rule 5)
 
-	'and'          shift, and enter state 46
-	'or'           shift, and enter state 47
-	')'            shift, and enter state 48
+	'and'          shift, and enter state 47
+	'or'           shift, and enter state 48
+	')'            shift, and enter state 49
 
 
 State 15
@@ -322,21 +324,21 @@ State 15
 	'>='           shift, and enter state 25
 	'<'            shift, and enter state 26
 	'<='           shift, and enter state 27
-	')'            shift, and enter state 45
+	')'            shift, and enter state 46
 
 
 State 16
 
 	FOLExpr -> 'forall' id . '.' '(' Prop ')'           (rule 13)
 
-	'.'            shift, and enter state 44
+	'.'            shift, and enter state 45
 
 
 State 17
 
 	FOLExpr -> 'exists' id . '.' '(' Prop ')'           (rule 14)
 
-	'.'            shift, and enter state 43
+	'.'            shift, and enter state 44
 
 
 State 18
@@ -351,7 +353,7 @@ State 18
 	'forall'       shift, and enter state 12
 	'('            shift, and enter state 13
 
-	Prop           goto state 42
+	Prop           goto state 43
 	FOLExpr        goto state 5
 	Exp            goto state 6
 
@@ -381,9 +383,9 @@ State 20
 
 	id             shift, and enter state 7
 	number         shift, and enter state 8
-	'('            shift, and enter state 34
+	'('            shift, and enter state 35
 
-	Exp            goto state 41
+	Exp            goto state 42
 
 State 21
 
@@ -391,9 +393,9 @@ State 21
 
 	id             shift, and enter state 7
 	number         shift, and enter state 8
-	'('            shift, and enter state 34
+	'('            shift, and enter state 35
 
-	Exp            goto state 40
+	Exp            goto state 41
 
 State 22
 
@@ -401,9 +403,9 @@ State 22
 
 	id             shift, and enter state 7
 	number         shift, and enter state 8
-	'('            shift, and enter state 34
+	'('            shift, and enter state 35
 
-	Exp            goto state 39
+	Exp            goto state 40
 
 State 23
 
@@ -411,9 +413,9 @@ State 23
 
 	id             shift, and enter state 7
 	number         shift, and enter state 8
-	'('            shift, and enter state 34
+	'('            shift, and enter state 35
 
-	Exp            goto state 38
+	Exp            goto state 39
 
 State 24
 
@@ -421,9 +423,9 @@ State 24
 
 	id             shift, and enter state 7
 	number         shift, and enter state 8
-	'('            shift, and enter state 34
+	'('            shift, and enter state 35
 
-	Exp            goto state 37
+	Exp            goto state 38
 
 State 25
 
@@ -431,9 +433,9 @@ State 25
 
 	id             shift, and enter state 7
 	number         shift, and enter state 8
-	'('            shift, and enter state 34
+	'('            shift, and enter state 35
 
-	Exp            goto state 36
+	Exp            goto state 37
 
 State 26
 
@@ -441,9 +443,9 @@ State 26
 
 	id             shift, and enter state 7
 	number         shift, and enter state 8
-	'('            shift, and enter state 34
+	'('            shift, and enter state 35
 
-	Exp            goto state 35
+	Exp            goto state 36
 
 State 27
 
@@ -451,39 +453,49 @@ State 27
 
 	id             shift, and enter state 7
 	number         shift, and enter state 8
-	'('            shift, and enter state 34
+	'('            shift, and enter state 35
 
-	Exp            goto state 33
+	Exp            goto state 34
 
 State 28
 
 	Prog -> '{' Prop '}' . Cmd '{' Prop '|' Exp '}'     (rule 1)
 
 	id             shift, and enter state 30
-	'if'           shift, and enter state 31
-	'while'        shift, and enter state 32
+	'skip'         shift, and enter state 31
+	'if'           shift, and enter state 32
+	'while'        shift, and enter state 33
 
 	Cmd            goto state 29
 
 State 29
 
 	Prog -> '{' Prop '}' Cmd . '{' Prop '|' Exp '}'     (rule 1)
-	Cmd -> Cmd . ';' Cmd                                (rule 24)
+	Cmd -> Cmd . ';' Cmd                                (rule 25)
 
-	'{'            shift, and enter state 57
-	';'            shift, and enter state 58
+	'{'            shift, and enter state 58
+	';'            shift, and enter state 59
 
 
 State 30
 
-	Cmd -> id . '=' Exp                                 (rule 21)
+	Cmd -> id . '=' Exp                                 (rule 22)
 
-	'='            shift, and enter state 56
+	'='            shift, and enter state 57
 
 
 State 31
 
-	Cmd -> 'if' . Prop 'then' Cmd 'end' 'else' Cmd 'end'    (rule 22)
+	Cmd -> 'skip' .                                     (rule 21)
+
+	'end'          reduce using rule 21
+	'{'            reduce using rule 21
+	';'            reduce using rule 21
+
+
+State 32
+
+	Cmd -> 'if' . Prop 'then' Cmd 'end' 'else' Cmd 'end'    (rule 23)
 
 	id             shift, and enter state 7
 	number         shift, and enter state 8
@@ -493,18 +505,18 @@ State 31
 	'forall'       shift, and enter state 12
 	'('            shift, and enter state 13
 
-	Prop           goto state 55
+	Prop           goto state 56
 	FOLExpr        goto state 5
 	Exp            goto state 6
 
-State 32
-
-	Cmd -> 'while' . string Prop 'do' Cmd 'end'         (rule 23)
-
-	string         shift, and enter state 54
-
-
 State 33
+
+	Cmd -> 'while' . string Prop 'do' Cmd 'end'         (rule 24)
+
+	string         shift, and enter state 55
+
+
+State 34
 
 	FOLExpr -> Exp '<=' Exp .                           (rule 10)
 	Exp -> Exp . '+' Exp                                (rule 18)
@@ -530,17 +542,17 @@ State 33
 	'|'            reduce using rule 10
 
 
-State 34
+State 35
 
 	Exp -> '(' . Exp ')'                                (rule 15)
 
 	id             shift, and enter state 7
 	number         shift, and enter state 8
-	'('            shift, and enter state 34
+	'('            shift, and enter state 35
 
-	Exp            goto state 53
+	Exp            goto state 54
 
-State 35
+State 36
 
 	FOLExpr -> Exp '<' Exp .                            (rule 9)
 	Exp -> Exp . '+' Exp                                (rule 18)
@@ -566,7 +578,7 @@ State 35
 	'|'            reduce using rule 9
 
 
-State 36
+State 37
 
 	FOLExpr -> Exp '>=' Exp .                           (rule 12)
 	Exp -> Exp . '+' Exp                                (rule 18)
@@ -592,7 +604,7 @@ State 36
 	'|'            reduce using rule 12
 
 
-State 37
+State 38
 
 	FOLExpr -> Exp '>' Exp .                            (rule 11)
 	Exp -> Exp . '+' Exp                                (rule 18)
@@ -618,7 +630,7 @@ State 37
 	'|'            reduce using rule 11
 
 
-State 38
+State 39
 
 	FOLExpr -> Exp '==' Exp .                           (rule 8)
 	Exp -> Exp . '+' Exp                                (rule 18)
@@ -644,7 +656,7 @@ State 38
 	'|'            reduce using rule 8
 
 
-State 39
+State 40
 
 	Exp -> Exp . '+' Exp                                (rule 18)
 	Exp -> Exp . '-' Exp                                (rule 19)
@@ -678,7 +690,7 @@ State 39
 	';'            reduce using rule 20
 
 
-State 40
+State 41
 
 	Exp -> Exp . '+' Exp                                (rule 18)
 	Exp -> Exp . '-' Exp                                (rule 19)
@@ -712,7 +724,7 @@ State 40
 	';'            reduce using rule 19
 
 
-State 41
+State 42
 
 	Exp -> Exp . '+' Exp                                (rule 18)
 	Exp -> Exp '+' Exp .                                (rule 18)
@@ -746,7 +758,7 @@ State 41
 	';'            reduce using rule 18
 
 
-State 42
+State 43
 
 	Prop -> 'implies' Prop Prop .                       (rule 6)
 
@@ -766,21 +778,21 @@ State 42
 	'|'            reduce using rule 6
 
 
-State 43
+State 44
 
 	FOLExpr -> 'exists' id '.' . '(' Prop ')'           (rule 14)
+
+	'('            shift, and enter state 53
+
+
+State 45
+
+	FOLExpr -> 'forall' id '.' . '(' Prop ')'           (rule 13)
 
 	'('            shift, and enter state 52
 
 
-State 44
-
-	FOLExpr -> 'forall' id '.' . '(' Prop ')'           (rule 13)
-
-	'('            shift, and enter state 51
-
-
-State 45
+State 46
 
 	Exp -> '(' Exp ')' .                                (rule 15)
 
@@ -811,9 +823,25 @@ State 45
 	';'            reduce using rule 15
 
 
-State 46
+State 47
 
 	Prop -> '(' Prop 'and' . Prop ')'                   (rule 4)
+
+	id             shift, and enter state 7
+	number         shift, and enter state 8
+	'not'          shift, and enter state 9
+	'implies'      shift, and enter state 10
+	'exists'       shift, and enter state 11
+	'forall'       shift, and enter state 12
+	'('            shift, and enter state 13
+
+	Prop           goto state 51
+	FOLExpr        goto state 5
+	Exp            goto state 6
+
+State 48
+
+	Prop -> '(' Prop 'or' . Prop ')'                    (rule 5)
 
 	id             shift, and enter state 7
 	number         shift, and enter state 8
@@ -827,23 +855,7 @@ State 46
 	FOLExpr        goto state 5
 	Exp            goto state 6
 
-State 47
-
-	Prop -> '(' Prop 'or' . Prop ')'                    (rule 5)
-
-	id             shift, and enter state 7
-	number         shift, and enter state 8
-	'not'          shift, and enter state 9
-	'implies'      shift, and enter state 10
-	'exists'       shift, and enter state 11
-	'forall'       shift, and enter state 12
-	'('            shift, and enter state 13
-
-	Prop           goto state 49
-	FOLExpr        goto state 5
-	Exp            goto state 6
-
-State 48
+State 49
 
 	Prop -> '(' Prop ')' .                              (rule 2)
 
@@ -863,23 +875,39 @@ State 48
 	'|'            reduce using rule 2
 
 
-State 49
+State 50
 
 	Prop -> '(' Prop 'or' Prop . ')'                    (rule 5)
 
-	')'            shift, and enter state 67
-
-
-State 50
-
-	Prop -> '(' Prop 'and' Prop . ')'                   (rule 4)
-
-	')'            shift, and enter state 66
+	')'            shift, and enter state 68
 
 
 State 51
 
+	Prop -> '(' Prop 'and' Prop . ')'                   (rule 4)
+
+	')'            shift, and enter state 67
+
+
+State 52
+
 	FOLExpr -> 'forall' id '.' '(' . Prop ')'           (rule 13)
+
+	id             shift, and enter state 7
+	number         shift, and enter state 8
+	'not'          shift, and enter state 9
+	'implies'      shift, and enter state 10
+	'exists'       shift, and enter state 11
+	'forall'       shift, and enter state 12
+	'('            shift, and enter state 13
+
+	Prop           goto state 66
+	FOLExpr        goto state 5
+	Exp            goto state 6
+
+State 53
+
+	FOLExpr -> 'exists' id '.' '(' . Prop ')'           (rule 14)
 
 	id             shift, and enter state 7
 	number         shift, and enter state 8
@@ -893,9 +921,22 @@ State 51
 	FOLExpr        goto state 5
 	Exp            goto state 6
 
-State 52
+State 54
 
-	FOLExpr -> 'exists' id '.' '(' . Prop ')'           (rule 14)
+	Exp -> '(' Exp . ')'                                (rule 15)
+	Exp -> Exp . '+' Exp                                (rule 18)
+	Exp -> Exp . '-' Exp                                (rule 19)
+	Exp -> Exp . '*' Exp                                (rule 20)
+
+	'+'            shift, and enter state 20
+	'-'            shift, and enter state 21
+	'*'            shift, and enter state 22
+	')'            shift, and enter state 46
+
+
+State 55
+
+	Cmd -> 'while' string . Prop 'do' Cmd 'end'         (rule 24)
 
 	id             shift, and enter state 7
 	number         shift, and enter state 8
@@ -909,53 +950,24 @@ State 52
 	FOLExpr        goto state 5
 	Exp            goto state 6
 
-State 53
-
-	Exp -> '(' Exp . ')'                                (rule 15)
-	Exp -> Exp . '+' Exp                                (rule 18)
-	Exp -> Exp . '-' Exp                                (rule 19)
-	Exp -> Exp . '*' Exp                                (rule 20)
-
-	'+'            shift, and enter state 20
-	'-'            shift, and enter state 21
-	'*'            shift, and enter state 22
-	')'            shift, and enter state 45
-
-
-State 54
-
-	Cmd -> 'while' string . Prop 'do' Cmd 'end'         (rule 23)
-
-	id             shift, and enter state 7
-	number         shift, and enter state 8
-	'not'          shift, and enter state 9
-	'implies'      shift, and enter state 10
-	'exists'       shift, and enter state 11
-	'forall'       shift, and enter state 12
-	'('            shift, and enter state 13
-
-	Prop           goto state 63
-	FOLExpr        goto state 5
-	Exp            goto state 6
-
-State 55
-
-	Cmd -> 'if' Prop . 'then' Cmd 'end' 'else' Cmd 'end'    (rule 22)
-
-	'then'         shift, and enter state 62
-
-
 State 56
 
-	Cmd -> id '=' . Exp                                 (rule 21)
+	Cmd -> 'if' Prop . 'then' Cmd 'end' 'else' Cmd 'end'    (rule 23)
+
+	'then'         shift, and enter state 63
+
+
+State 57
+
+	Cmd -> id '=' . Exp                                 (rule 22)
 
 	id             shift, and enter state 7
 	number         shift, and enter state 8
-	'('            shift, and enter state 34
+	'('            shift, and enter state 35
 
-	Exp            goto state 61
+	Exp            goto state 62
 
-State 57
+State 58
 
 	Prog -> '{' Prop '}' Cmd '{' . Prop '|' Exp '}'     (rule 1)
 
@@ -967,84 +979,86 @@ State 57
 	'forall'       shift, and enter state 12
 	'('            shift, and enter state 13
 
-	Prop           goto state 60
+	Prop           goto state 61
 	FOLExpr        goto state 5
 	Exp            goto state 6
 
-State 58
-
-	Cmd -> Cmd ';' . Cmd                                (rule 24)
-
-	id             shift, and enter state 30
-	'if'           shift, and enter state 31
-	'while'        shift, and enter state 32
-
-	Cmd            goto state 59
-
 State 59
 
-	Cmd -> Cmd . ';' Cmd                                (rule 24)
-	Cmd -> Cmd ';' Cmd .                                (rule 24)
+	Cmd -> Cmd ';' . Cmd                                (rule 25)
 
-	'end'          reduce using rule 24
-	'{'            reduce using rule 24
-	';'            reduce using rule 24
+	id             shift, and enter state 30
+	'skip'         shift, and enter state 31
+	'if'           shift, and enter state 32
+	'while'        shift, and enter state 33
 
+	Cmd            goto state 60
 
 State 60
 
-	Prog -> '{' Prop '}' Cmd '{' Prop . '|' Exp '}'     (rule 1)
+	Cmd -> Cmd . ';' Cmd                                (rule 25)
+	Cmd -> Cmd ';' Cmd .                                (rule 25)
 
-	'|'            shift, and enter state 72
+	'end'          reduce using rule 25
+	'{'            reduce using rule 25
+	';'            reduce using rule 25
 
 
 State 61
 
-	Exp -> Exp . '+' Exp                                (rule 18)
-	Exp -> Exp . '-' Exp                                (rule 19)
-	Exp -> Exp . '*' Exp                                (rule 20)
-	Cmd -> id '=' Exp .                                 (rule 21)
+	Prog -> '{' Prop '}' Cmd '{' Prop . '|' Exp '}'     (rule 1)
 
-	'+'            shift, and enter state 20
-	'-'            shift, and enter state 21
-	'*'            shift, and enter state 22
-	'end'          reduce using rule 21
-	'{'            reduce using rule 21
-	';'            reduce using rule 21
+	'|'            shift, and enter state 73
 
 
 State 62
 
-	Cmd -> 'if' Prop 'then' . Cmd 'end' 'else' Cmd 'end'    (rule 22)
+	Exp -> Exp . '+' Exp                                (rule 18)
+	Exp -> Exp . '-' Exp                                (rule 19)
+	Exp -> Exp . '*' Exp                                (rule 20)
+	Cmd -> id '=' Exp .                                 (rule 22)
 
-	id             shift, and enter state 30
-	'if'           shift, and enter state 31
-	'while'        shift, and enter state 32
+	'+'            shift, and enter state 20
+	'-'            shift, and enter state 21
+	'*'            shift, and enter state 22
+	'end'          reduce using rule 22
+	'{'            reduce using rule 22
+	';'            reduce using rule 22
 
-	Cmd            goto state 71
 
 State 63
 
-	Cmd -> 'while' string Prop . 'do' Cmd 'end'         (rule 23)
+	Cmd -> 'if' Prop 'then' . Cmd 'end' 'else' Cmd 'end'    (rule 23)
 
-	'do'           shift, and enter state 70
+	id             shift, and enter state 30
+	'skip'         shift, and enter state 31
+	'if'           shift, and enter state 32
+	'while'        shift, and enter state 33
 
+	Cmd            goto state 72
 
 State 64
 
-	FOLExpr -> 'exists' id '.' '(' Prop . ')'           (rule 14)
+	Cmd -> 'while' string Prop . 'do' Cmd 'end'         (rule 24)
 
-	')'            shift, and enter state 69
+	'do'           shift, and enter state 71
 
 
 State 65
 
-	FOLExpr -> 'forall' id '.' '(' Prop . ')'           (rule 13)
+	FOLExpr -> 'exists' id '.' '(' Prop . ')'           (rule 14)
 
-	')'            shift, and enter state 68
+	')'            shift, and enter state 70
 
 
 State 66
+
+	FOLExpr -> 'forall' id '.' '(' Prop . ')'           (rule 13)
+
+	')'            shift, and enter state 69
+
+
+State 67
 
 	Prop -> '(' Prop 'and' Prop ')' .                   (rule 4)
 
@@ -1064,7 +1078,7 @@ State 66
 	'|'            reduce using rule 4
 
 
-State 67
+State 68
 
 	Prop -> '(' Prop 'or' Prop ')' .                    (rule 5)
 
@@ -1084,7 +1098,7 @@ State 67
 	'|'            reduce using rule 5
 
 
-State 68
+State 69
 
 	FOLExpr -> 'forall' id '.' '(' Prop ')' .           (rule 13)
 
@@ -1104,7 +1118,7 @@ State 68
 	'|'            reduce using rule 13
 
 
-State 69
+State 70
 
 	FOLExpr -> 'exists' id '.' '(' Prop ')' .           (rule 14)
 
@@ -1124,36 +1138,37 @@ State 69
 	'|'            reduce using rule 14
 
 
-State 70
-
-	Cmd -> 'while' string Prop 'do' . Cmd 'end'         (rule 23)
-
-	id             shift, and enter state 30
-	'if'           shift, and enter state 31
-	'while'        shift, and enter state 32
-
-	Cmd            goto state 75
-
 State 71
 
-	Cmd -> 'if' Prop 'then' Cmd . 'end' 'else' Cmd 'end'    (rule 22)
-	Cmd -> Cmd . ';' Cmd                                (rule 24)
+	Cmd -> 'while' string Prop 'do' . Cmd 'end'         (rule 24)
 
-	'end'          shift, and enter state 74
-	';'            shift, and enter state 58
+	id             shift, and enter state 30
+	'skip'         shift, and enter state 31
+	'if'           shift, and enter state 32
+	'while'        shift, and enter state 33
 
+	Cmd            goto state 76
 
 State 72
+
+	Cmd -> 'if' Prop 'then' Cmd . 'end' 'else' Cmd 'end'    (rule 23)
+	Cmd -> Cmd . ';' Cmd                                (rule 25)
+
+	'end'          shift, and enter state 75
+	';'            shift, and enter state 59
+
+
+State 73
 
 	Prog -> '{' Prop '}' Cmd '{' Prop '|' . Exp '}'     (rule 1)
 
 	id             shift, and enter state 7
 	number         shift, and enter state 8
-	'('            shift, and enter state 34
+	'('            shift, and enter state 35
 
-	Exp            goto state 73
+	Exp            goto state 74
 
-State 73
+State 74
 
 	Prog -> '{' Prop '}' Cmd '{' Prop '|' Exp . '}'     (rule 1)
 	Exp -> Exp . '+' Exp                                (rule 18)
@@ -1163,73 +1178,74 @@ State 73
 	'+'            shift, and enter state 20
 	'-'            shift, and enter state 21
 	'*'            shift, and enter state 22
-	'}'            shift, and enter state 78
-
-
-State 74
-
-	Cmd -> 'if' Prop 'then' Cmd 'end' . 'else' Cmd 'end'    (rule 22)
-
-	'else'         shift, and enter state 77
+	'}'            shift, and enter state 79
 
 
 State 75
 
-	Cmd -> 'while' string Prop 'do' Cmd . 'end'         (rule 23)
-	Cmd -> Cmd . ';' Cmd                                (rule 24)
+	Cmd -> 'if' Prop 'then' Cmd 'end' . 'else' Cmd 'end'    (rule 23)
 
-	'end'          shift, and enter state 76
-	';'            shift, and enter state 58
+	'else'         shift, and enter state 78
 
 
 State 76
 
-	Cmd -> 'while' string Prop 'do' Cmd 'end' .         (rule 23)
+	Cmd -> 'while' string Prop 'do' Cmd . 'end'         (rule 24)
+	Cmd -> Cmd . ';' Cmd                                (rule 25)
 
-	'end'          reduce using rule 23
-	'{'            reduce using rule 23
-	';'            reduce using rule 23
+	'end'          shift, and enter state 77
+	';'            shift, and enter state 59
 
 
 State 77
 
-	Cmd -> 'if' Prop 'then' Cmd 'end' 'else' . Cmd 'end'    (rule 22)
+	Cmd -> 'while' string Prop 'do' Cmd 'end' .         (rule 24)
 
-	id             shift, and enter state 30
-	'if'           shift, and enter state 31
-	'while'        shift, and enter state 32
+	'end'          reduce using rule 24
+	'{'            reduce using rule 24
+	';'            reduce using rule 24
 
-	Cmd            goto state 79
 
 State 78
+
+	Cmd -> 'if' Prop 'then' Cmd 'end' 'else' . Cmd 'end'    (rule 23)
+
+	id             shift, and enter state 30
+	'skip'         shift, and enter state 31
+	'if'           shift, and enter state 32
+	'while'        shift, and enter state 33
+
+	Cmd            goto state 80
+
+State 79
 
 	Prog -> '{' Prop '}' Cmd '{' Prop '|' Exp '}' .     (rule 1)
 
 	%eof           reduce using rule 1
 
 
-State 79
-
-	Cmd -> 'if' Prop 'then' Cmd 'end' 'else' Cmd . 'end'    (rule 22)
-	Cmd -> Cmd . ';' Cmd                                (rule 24)
-
-	'end'          shift, and enter state 80
-	';'            shift, and enter state 58
-
-
 State 80
 
-	Cmd -> 'if' Prop 'then' Cmd 'end' 'else' Cmd 'end' .    (rule 22)
+	Cmd -> 'if' Prop 'then' Cmd 'end' 'else' Cmd . 'end'    (rule 23)
+	Cmd -> Cmd . ';' Cmd                                (rule 25)
 
-	'end'          reduce using rule 22
-	'{'            reduce using rule 22
-	';'            reduce using rule 22
+	'end'          shift, and enter state 81
+	';'            shift, and enter state 59
+
+
+State 81
+
+	Cmd -> 'if' Prop 'then' Cmd 'end' 'else' Cmd 'end' .    (rule 23)
+
+	'end'          reduce using rule 23
+	'{'            reduce using rule 23
+	';'            reduce using rule 23
 
 
 -----------------------------------------------------------------------------
 Grammar Totals
 -----------------------------------------------------------------------------
-Number of rules: 25
-Number of terminals: 31
+Number of rules: 26
+Number of terminals: 32
 Number of non-terminals: 6
-Number of states: 81
+Number of states: 82

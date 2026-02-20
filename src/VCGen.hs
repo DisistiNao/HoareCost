@@ -5,8 +5,8 @@ import Oracle
 import Variables
 
 wpc :: Command Vars -> PropCalc (FOL Vars) -> IO (PropCalc (FOL Vars), Arith Vars)
--- wpc CSkip pos = 
---   pure (q, S Z)
+wpc CSkip pos = 
+  pure (pos, S Z)
 
 wpc (CAssign val exp) pos = pure (subst pos val exp, Plus (costAExpr exp) (S Z))
 
@@ -22,7 +22,7 @@ wpc (CIfElse cond c1 c2) pos = do
   pure (wp, Plus (Max t1 t2) (costBExpr cond))
 
 wpc (CWhile loopId cond body) pos = do
-  OracleData inv variant n costFun <- getOracle loopId
+  OracleData inv variant n _ <- getOracle loopId
   
   (_, bodyCost) <- wpc body inv 
   let totalCondCost = Mult (Plus (S Z) (costBExpr cond)) (Plus n (S Z))
@@ -35,7 +35,7 @@ wpc (CWhile loopId cond body) pos = do
   pure (wp, cost)
 
 vc :: Command Vars -> PropCalc (FOL Vars) -> IO [PropCalc (FOL Vars)]
--- vc CSkip _ = pure []
+vc CSkip _ = pure []
 vc (CAssign _ _) _ = pure []
 
 vc (CSequence c1 c2) pos = do

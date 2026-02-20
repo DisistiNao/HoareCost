@@ -54,6 +54,7 @@ tokens :-
       <0> "exists"      {simpleToken TExists}
       <0> "forall"      {simpleToken TForAll}
 
+      <0> "skip"        {simpleToken TSkip}
       <0> "="           {simpleToken TAssign}
       <0> "if"          {simpleToken TIf}
       <0> "then"        {simpleToken TThen}
@@ -130,6 +131,7 @@ data Lexeme
   | TExists
   | TForAll
 
+  | TSkip
   | TAssign
   | TIf
   | TThen

@@ -1,6 +1,6 @@
 module Main where
 
-import Imp
+-- import Imp
 -- import Hoare
 import Lexer.Lexer
 import Parser.Arith

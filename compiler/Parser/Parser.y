@@ -37,6 +37,7 @@ import Utils (num)
     'exists'      { Token _ TExists }
     'forall'      { Token _ TForAll }
 
+    'skip'        { Token _ TSkip }
     '='           { Token _ TAssign }
     'if'          { Token _ TIf }
     'then'        { Token _ TThen }
@@ -88,7 +89,8 @@ Exp
     | Exp '*' Exp                                   { Mult ($1) ($3) }
 
 Cmd 
-    : id '=' Exp                                    { CAssign ($1) ($3) }
+    : 'skip'                                        { CSkip }
+    | id '=' Exp                                    { CAssign ($1) ($3) }
     | 'if' Prop 'then' Cmd 'end' 'else' Cmd 'end'   { CIfElse ($2) ($4) ($7) }
     | 'while' string Prop 'do' Cmd 'end'            { CWhile ($2) ($3) ($5) }
     | Cmd ';' Cmd                                   { CSequence ($1) ($3) }

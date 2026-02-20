@@ -35,9 +35,8 @@ data FOL a =
   deriving (Eq, Show)
 
 data Command a =
-  -- CSkip
-  -- | CAssign a (Arith a)
-  CAssign a (Arith a)
+  CSkip
+  | CAssign a (Arith a)
   | CSequence (Command a) (Command a)
   | CIfElse (PropCalc (FOL a)) (Command a) (Command a)
   | CWhile String (PropCalc (FOL a)) (Command a)

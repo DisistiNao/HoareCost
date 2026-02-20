@@ -18,7 +18,7 @@ extra-source-files:  CHANGELOG.md
 
 library
   exposed-modules:
-    Imp,
+    -- Imp,
     -- Hoare,
     Lexer.Lexer,
     Oracle,
