@@ -40,7 +40,6 @@ data Command a =
   | CSequence (Command a) (Command a)
   | CIfElse (PropCalc (FOL a)) (Command a) (Command a)
   | CWhile String (PropCalc (FOL a)) (Command a)
-  -- | CAssert (PropCalc (FOL a)) (Command a) (PropCalc (FOL a))
   deriving (Show)
 
 substFOL :: Eq a => FOL a -> a -> Arith a -> FOL a

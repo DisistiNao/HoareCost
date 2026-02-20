@@ -1,7 +1,7 @@
 module VCGen where
 
-import Syntax
 import Oracle
+import Syntax
 import Variables
 
 wpc :: Command Vars -> PropCalc (FOL Vars) -> IO (PropCalc (FOL Vars), Arith Vars)

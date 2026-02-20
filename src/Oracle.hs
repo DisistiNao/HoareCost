@@ -1,14 +1,14 @@
 module Oracle where
 
+import Control.Exception (catch, SomeException)
+import Data.IORef
+import Data.List
 import System.IO (hFlush, stdout)
 import System.IO.Unsafe (unsafePerformIO)
-import Data.IORef
-import qualified Data.Map as M
-import Control.Exception (catch, SomeException)
-import Data.List
 
-import Parser.Arith
-import Parser.PropCalc
+import qualified Data.Map as M
+
+import Parser.Parser (arithParser, propCalcParser)
 import Syntax
 import Variables
 

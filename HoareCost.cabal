@@ -7,7 +7,7 @@ version:             0.1.0.0
 -- synopsis:
 -- description:
 -- bug-reports:
--- license:
+-- license:             NONE
 license-file:        LICENSE
 author:              DisistiNao
 maintainer:          gabrielsaldanha373@gmail.com
@@ -18,12 +18,9 @@ extra-source-files:  CHANGELOG.md
 
 library
   exposed-modules:
-    -- Imp,
-    -- Hoare,
     Lexer.Lexer,
     Oracle,
-    Parser.Arith,
-    Parser.PropCalc,
+    Parser.Parser,
     Solver,
     Syntax,
     Utils,
@@ -35,6 +32,7 @@ library
     base >=4.13 && <4.22,
     containers,
     sbv < 9.0
+  build-tools:         alex, happy
   default-language:    Haskell2010
 
 executable HoareCost
@@ -50,9 +48,6 @@ executable HoareCost
 executable compiler
   main-is:             Main.hs
   hs-source-dirs:      compiler
-  other-modules: 
-    Lexer.Lexer,
-    Parser.Parser
   build-depends:
     array,
     base >=4.13 && <4.22,

@@ -1,10 +1,12 @@
 module Main where
 
-import qualified Parser.Parser as Parser
-
-import System.Environment (getArgs)
 import Control.Exception (catch, IOException)
+import System.Environment (getArgs)
 import System.IO (readFile)
+
+import Parser.Parser (hcParser, HCLang(..))
+import Solver (proveVCs)
+import VCGen
 
 main :: IO ()
 main = do
@@ -15,7 +17,7 @@ main = do
             catch
                 (do
                     file <- readFile fileName
-                    Parser.run file
+                    run file
                 )
                 handleError
         [] ->
@@ -24,3 +26,15 @@ main = do
 handleError :: IOException -> IO ()
 handleError _ =
     putStrLn "Error: Could not open the file."
+
+run :: String -> IO ()
+run input = do
+    putStrLn "Generating VCs for the program..."
+
+    case hcParser input of
+        Left err ->
+            putStrLn ("Parse error: " ++ err)
+
+        Right (HCLang pre cmd post custoAlvo) -> do
+            vcs <- vcg pre cmd post custoAlvo
+            proveVCs vcs

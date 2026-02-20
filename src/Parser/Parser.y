@@ -1,15 +1,15 @@
 {
-module Parser.Parser (run) where
+module Parser.Parser (hcParser, arithParser, propCalcParser, HCLang(..)) where
 
 import Lexer.Lexer hiding (lexer)
 import Syntax
-import Variables
-import VCGen
-import Solver (proveVCs)
 import Utils (num)
+import Variables
 }
 
 %name parser Prog
+%name parseArith Exp
+%name parsePropCalc Prop
 %monad {Alex}{(>>=)}{return}
 %tokentype { Token }
 %error { parseError }
@@ -109,15 +109,9 @@ hcParser :: String -> Either String (HCLang Vars)
 hcParser input 
   = runAlex input parser 
 
-run :: String -> IO ()
-run input = do
-  putStrLn "Generating VCs for the program..."
+arithParser :: String -> Either String (Arith Vars)
+arithParser input = runAlex input parseArith
 
-  case hcParser input of
-    Left err ->
-      putStrLn ("Parse error: " ++ err)
-
-    Right (HCLang pre cmd post custoAlvo) -> do
-      vcs <- vcg pre cmd post custoAlvo
-      proveVCs vcs
+propCalcParser :: String -> Either String (PropCalc (FOL Vars))
+propCalcParser input = runAlex input parsePropCalc
 }

@@ -1,8 +1,10 @@
 module Solver where
 
-import Data.SBV
-import qualified Data.Map as M
 import Data.List (nub)
+import Data.SBV
+
+import qualified Data.Map as M
+
 import Syntax
 import Variables
 
